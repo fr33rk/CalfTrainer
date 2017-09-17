@@ -1,0 +1,4 @@
+CalfTrainer.Android.MainActivity, CalfTrainer.Android;md5cef67eb88402bf734551745ba8241a90.MainActivity
+CalfTrainer.Android.MainActivity, CalfTrainer.Android, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5cef67eb88402bf734551745ba8241a90.MainActivity
+CalfTrainer.Android.MainActivity;md5cef67eb88402bf734551745ba8241a90.MainActivity
+calftrainer.android.MainActivity;md5cef67eb88402bf734551745ba8241a90.MainActivity
