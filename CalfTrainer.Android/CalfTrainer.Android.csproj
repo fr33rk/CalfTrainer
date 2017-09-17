@@ -55,7 +55,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuisinessLogic\Exercise.cs" />
-    <Compile Include="BuisinessLogic\ExersciseConfigurations.cs" />
+    <Compile Include="BuisinessLogic\ExerciseChangedEventArgs.cs" />
+    <Compile Include="BuisinessLogic\ExerciseService.cs" />
+    <Compile Include="BuisinessLogic\ExerciseConfiguration.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
