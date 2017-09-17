@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Timers;
 
 namespace CalfTrainer.Android.BuisinessLogic
 {
@@ -26,15 +27,29 @@ namespace CalfTrainer.Android.BuisinessLogic
 	public class ExerciseService
 	{
 		private Exercise mExercise;
+		private Timer mTimer;
 
 		public void Prepare()
 		{
 			var config = new ExerciseConfiguration();
 			mExercise = new Exercise(config);
+			mExercise.ActiveSubExerciseChanged += (s, e) => ActiveSubExerciseChanged?.Invoke(s, e);
+
+			mTimer = new Timer(1000);
+			mTimer.Elapsed += TimerOnElapsed;
 
 			SignalExerciseChanged();
+		}
 
-			ActiveSubExerciseChanged?.Invoke(this, new ActiveSubExcersizeChangedEventArgs(SubExercise.Undefined, SubExercise.LongLeft));
+		public void Start()
+		{
+			mTimer.Start();
+		}
+
+		private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+		{
+			mExercise.Tick();
+			SignalExerciseChanged();
 		}
 
 		public event EventHandler<ActiveSubExcersizeChangedEventArgs> ActiveSubExerciseChanged;
