@@ -32,6 +32,7 @@ namespace CalfTrainer.Android
 			mExerciseService = new ExerciseService();
 			mExerciseService.ExerciseChanged += ExerciseServiceOnExerciseChanged;
 			mExerciseService.ActiveSubExerciseChanged += ExerciseServiceOnActiveSubExerciseChanged;
+			mExerciseService.ExerciseIsDone += ExerciseServiceOnExerciseIsDone;
 
 			// Get the controls
 			mMainCounter = FindViewById<TextView>(Resource.Id.textViewMainCounter);
@@ -46,6 +47,12 @@ namespace CalfTrainer.Android
 
 			// Prepare for a new exercise.
 			mExerciseService.Prepare();
+		}
+
+		private void ExerciseServiceOnExerciseIsDone(object sender, EventArgs eventArgs)
+		{
+			mExerciseService.Prepare();
+			mStartStopButton.Enabled = true;
 		}
 
 		private void StartStopButtonOnClick(object sender, EventArgs eventArgs)

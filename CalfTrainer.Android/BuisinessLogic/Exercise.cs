@@ -4,8 +4,9 @@ namespace CalfTrainer.Android.BuisinessLogic
 {
 	public class Exercise
 	{
-		private ExerciseConfiguration mConfiguration;
+		private readonly ExerciseConfiguration mConfiguration;
 		private SubExercise mCurrentSubExercise;
+		private bool mIsDone;
 
 		public Exercise(ExerciseConfiguration configuration)
 		{
@@ -41,29 +42,42 @@ namespace CalfTrainer.Android.BuisinessLogic
 
 		public event EventHandler<ActiveSubExcersizeChangedEventArgs> ActiveSubExerciseChanged;
 
-		public event EventHandler Done;
+		private void SignalIsDone()
+		{
+			IsDone?.Invoke(this, EventArgs.Empty);
+		}
+
+		public event EventHandler IsDone;
 
 		public void Tick()
 		{
-			if (mCurrentSubExercise == SubExercise.Undefined)
+			if (!mIsDone)
 			{
-				NextSubExercise();
-				return;
-			}
+				if (mCurrentSubExercise == SubExercise.Undefined)
+				{
+					NextSubExercise();
+					return;
+				}
 
-			if (RemainingPreparationTime > 0)
-			{
-				RemainingPreparationTime--;
-				return;
-			}
+				if (RemainingPreparationTime > 0)
+				{
+					RemainingPreparationTime--;
+					return;
+				}
 
-			if (RemainingSubExerciseTime > 0)
-			{
-				RemainingSubExerciseTime--;
-			}
-			else
-			{
-				NextSubExercise();
+				if (RemainingSubExerciseTime > 0)
+				{
+					RemainingSubExerciseTime--;
+				}
+				else
+				{
+					NextSubExercise();
+					if (mCurrentSubExercise == SubExercise.Undefined)
+					{
+						mIsDone = true;
+						SignalIsDone();
+					}
+				}
 			}
 		}
 

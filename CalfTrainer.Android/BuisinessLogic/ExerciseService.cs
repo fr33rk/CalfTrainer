@@ -34,11 +34,18 @@ namespace CalfTrainer.Android.BuisinessLogic
 			var config = new ExerciseConfiguration();
 			mExercise = new Exercise(config);
 			mExercise.ActiveSubExerciseChanged += (s, e) => ActiveSubExerciseChanged?.Invoke(s, e);
+			mExercise.IsDone += ExerciseOnIsDone;
 
 			mTimer = new Timer(1000);
 			mTimer.Elapsed += TimerOnElapsed;
 
 			SignalExerciseChanged();
+		}
+
+		private void ExerciseOnIsDone(object sender, EventArgs eventArgs)
+		{
+			mTimer.Stop();
+			ExerciseIsDone?.Invoke(sender, eventArgs);
 		}
 
 		public void Start()
@@ -64,5 +71,9 @@ namespace CalfTrainer.Android.BuisinessLogic
 		public event EventHandler<ExerciseChangedEventArgs> ExerciseChanged;
 
 		#endregion Event ExersizeChanged
+
+
+		
+		public event EventHandler ExerciseIsDone;
 	}
 }
