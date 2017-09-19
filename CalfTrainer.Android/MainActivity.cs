@@ -8,7 +8,7 @@ using CalfTrainer.Android.BusinessLogic;
 
 namespace CalfTrainer.Android
 {
-	[Activity(Label = "CalfTrainer", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
+	[Activity(Label = "Kuiten trainer", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
 	public class MainActivity : Activity
 	{
 		private ExerciseService mExerciseService;
@@ -56,7 +56,7 @@ namespace CalfTrainer.Android
 
 		private void ExerciseServiceOnExerciseIsDone(object sender, EventArgs eventArgs)
 		{
-			mStartPauseButton.Text = "Start";
+			mStartPauseButton.Text = Resources.GetString(Resource.String.start);
 			mStopButton.Enabled = false;
 		}
 
@@ -65,12 +65,12 @@ namespace CalfTrainer.Android
 			if (mExerciseService.IsRunning)
 			{
 				mExerciseService.Pause();
-				mStartPauseButton.Text = "Resume";
+				mStartPauseButton.Text = Resources.GetString(Resource.String.resume);
 			}
 			else
 			{
 				mExerciseService.Start();
-				mStartPauseButton.Text = "Pause";
+				mStartPauseButton.Text = Resources.GetString(Resource.String.pause);
 			}
 
 			mStopButton.Enabled = true;
@@ -138,7 +138,8 @@ namespace CalfTrainer.Android
 				mCounterRightLongCalf.Text = exercise.LongRightCount.ToString();
 				mCounterLeftShortCalf.Text = exercise.ShortLeftCount.ToString();
 				mCounterRightShortCalf.Text = exercise.ShortRightCount.ToString();
-				mTotalTimeRemaining.Text = $@"Total time remaining: {exercise.RemainingTotalTime:mm\:ss}";
+				mTotalTimeRemaining.Text = string.Format(Resources.GetString(Resource.String.totalTimeRemaining),
+					exercise.RemainingTotalTime.ToString(@"mm\:ss"));
 			});
 		}
 	}

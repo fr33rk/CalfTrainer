@@ -13,7 +13,7 @@
         p1:textSize="128dp"
         p1:layout_gravity="center_horizontal" />
     <TextView
-        p1:text="Long Calf"
+        p1:text="@string/longCalfs"
         p1:layout_width="wrap_content"
         p1:layout_height="wrap_content"
         p1:id="@+id/textViewTitleLongCalf"
@@ -35,7 +35,7 @@
                 p1:textSize="72dp"
                 p1:layout_centerHorizontal="true" />
             <TextView
-                p1:text="Left"
+                p1:text="@string/left"
                 p1:layout_width="wrap_content"
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textViewTitleLeftLongCalf"
@@ -55,7 +55,7 @@
                 p1:textSize="72dp"
                 p1:layout_centerHorizontal="true" />
             <TextView
-                p1:text="Right"
+                p1:text="@string/right"
                 p1:layout_width="wrap_content"
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textViewTitleRightLongCalf"
@@ -65,7 +65,7 @@
         </RelativeLayout>
     </LinearLayout>
     <TextView
-        p1:text="Short Calf"
+        p1:text="@string/shortCalfs"
         p1:layout_width="wrap_content"
         p1:layout_height="wrap_content"
         p1:id="@+id/textViewTitleLongCalf"
@@ -87,7 +87,7 @@
                 p1:textSize="72dp"
                 p1:layout_centerHorizontal="true" />
             <TextView
-                p1:text="Left"
+                p1:text="@string/left"
                 p1:layout_width="wrap_content"
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textViewTitleLeftLongCalf"
@@ -107,7 +107,7 @@
                 p1:textSize="72dp"
                 p1:layout_centerHorizontal="true" />
             <TextView
-                p1:text="Right"
+                p1:text="@string/right"
                 p1:layout_width="wrap_content"
                 p1:layout_height="wrap_content"
                 p1:id="@+id/textViewTitleRightShortCalf"
@@ -117,7 +117,7 @@
         </RelativeLayout>
     </LinearLayout>
     <TextView
-        p1:text="Total excercise time remaining: 00:00"
+        p1:text="@string/totalTimeRemaining"
         p1:layout_width="wrap_content"
         p1:layout_height="wrap_content"
         p1:id="@+id/textViewTotalTimeRemaining"
@@ -129,14 +129,14 @@
         p1:layout_height="wrap_content"
         p1:layout_width="match_parent">
         <Button
-            p1:text="Start"
+            p1:text="@string/start"
             p1:layout_width="match_parent"
             p1:layout_height="wrap_content"
             p1:layout_weight="1"
             p1:id="@+id/buttonStart"
             p1:textSize="36dp" />
         <Button
-            p1:text="Stop"
+            p1:text="@string/stop"
             p1:layout_width="match_parent"
             p1:layout_height="wrap_content"
             p1:layout_weight="1"

@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">CalfTrainer.Android</string>
+  <string name="calfTrainer">Kuiten trainer</string>
+  <string name="longCalfs">Lange kuiten</string>
+  <string name="shortCalfs">Korte kuiten</string>
+  <string name="left">Links</string>
+  <string name="right">Rechts</string>
+  <string name="start">Start</string>
+  <string name="pause">Pause</string>
+  <string name="stop">Stop</string>
+  <string name="resume">Doorgaan</string>
+  <string name="totalTimeRemaining">Resterende tijd: {0}</string>
+
 </resources>
