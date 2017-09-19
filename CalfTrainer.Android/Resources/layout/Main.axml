@@ -5,12 +5,6 @@
     p1:id="@+id/mainLayout"
     p1:orientation="vertical"
     p1:keepScreenOn="true">
-    <Button
-        p1:text="Start"
-        p1:layout_width="match_parent"
-        p1:layout_height="wrap_content"
-        p1:id="@+id/buttonStart"
-        p1:textSize="48dp" />
     <TextView
         p1:text="8"
         p1:layout_width="wrap_content"
@@ -128,5 +122,26 @@
         p1:layout_height="wrap_content"
         p1:id="@+id/textViewTotalTimeRemaining"
         p1:textSize="16dp"
-        p1:layout_gravity="center_horizontal" />
+        p1:layout_gravity="center_horizontal"
+        p1:layout_margin="10dp" />
+    <LinearLayout
+        p1:orientation="horizontal"
+        p1:layout_height="wrap_content"
+        p1:layout_width="match_parent">
+        <Button
+            p1:text="Start"
+            p1:layout_width="match_parent"
+            p1:layout_height="wrap_content"
+            p1:layout_weight="1"
+            p1:id="@+id/buttonStart"
+            p1:textSize="36dp" />
+        <Button
+            p1:text="Stop"
+            p1:layout_width="match_parent"
+            p1:layout_height="wrap_content"
+            p1:layout_weight="1"
+            p1:id="@+id/buttonStop"
+            p1:textSize="36dp"
+            p1:enabled="false" />
+    </LinearLayout>
 </LinearLayout>

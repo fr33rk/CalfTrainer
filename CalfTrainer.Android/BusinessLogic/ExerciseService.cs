@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Timers;
 
-namespace CalfTrainer.Android.BuisinessLogic
+namespace CalfTrainer.Android.BusinessLogic
 {
 	public enum SubExercise
 	{
@@ -12,22 +12,19 @@ namespace CalfTrainer.Android.BuisinessLogic
 		ShortRight
 	}
 
-	public class ActiveSubExcersizeChangedEventArgs : EventArgs
-	{
-		public ActiveSubExcersizeChangedEventArgs(SubExercise oldSubExercise, SubExercise newSubExercise)
-		{
-			OldSubExercise = oldSubExercise;
-			NewSubExercise = newSubExercise;
-		}
-
-		public SubExercise OldSubExercise { get; }
-		public SubExercise NewSubExercise { get; }
-	}
-
 	public class ExerciseService
 	{
+		#region Definitions
+
 		private Exercise mExercise;
 		private Timer mTimer;
+
+		#endregion Definitions
+
+		public ExerciseService()
+		{
+			
+		}
 
 		public void Prepare()
 		{
@@ -42,24 +39,49 @@ namespace CalfTrainer.Android.BuisinessLogic
 			SignalExerciseChanged();
 		}
 
-		private void ExerciseOnIsDone(object sender, EventArgs eventArgs)
-		{
-			mTimer.Stop();
-			ExerciseIsDone?.Invoke(sender, eventArgs);
-		}
-
 		public void Start()
 		{
 			mTimer.Start();
 		}
 
+		public void Pause()
+		{
+			mTimer.Stop();
+		}
+
+		public void Stop()
+		{
+			mTimer.Stop();
+			Prepare();
+			ExerciseIsDone?.Invoke(this, EventArgs.Empty);
+		}
+
+		public bool IsRunning => mTimer.Enabled;
+
+		#region Exercise event handlers
+
+		private void ExerciseOnIsDone(object sender, EventArgs eventArgs)
+		{
+			Stop();
+		}
+
+		#endregion Exercise event handlers
+
+		#region Timer event
+
 		private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
 		{
-			mExercise.Tick();
+			mExercise.HandleNextClockTick();
 			SignalExerciseChanged();
 		}
 
-		public event EventHandler<ActiveSubExcersizeChangedEventArgs> ActiveSubExerciseChanged;
+		#endregion Timer event
+
+		#region event ActiveSubExerciseChanged
+
+		public event EventHandler<ActiveSubExerciseChangedEventArgs> ActiveSubExerciseChanged;
+
+		#endregion event ActiveSubExerciseChanged
 
 		#region Event ExersizeChanged
 
@@ -72,8 +94,10 @@ namespace CalfTrainer.Android.BuisinessLogic
 
 		#endregion Event ExersizeChanged
 
+		#region Event ExerciseIsDone
 
-		
 		public event EventHandler ExerciseIsDone;
+
+		#endregion Event ExerciseIsDone
 	}
 }

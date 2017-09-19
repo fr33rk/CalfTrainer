@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CalfTrainer.Android.BuisinessLogic
+namespace CalfTrainer.Android.BusinessLogic
 {
 	public class ExerciseChangedEventArgs : EventArgs
 	{

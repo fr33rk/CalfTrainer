@@ -1,4 +1,4 @@
-﻿namespace CalfTrainer.Android
+﻿namespace CalfTrainer.Android.BusinessLogic
 {
 	public class ExerciseConfiguration
 	{

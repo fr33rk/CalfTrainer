@@ -1,12 +1,18 @@
 ﻿using System;
 
-namespace CalfTrainer.Android.BuisinessLogic
+namespace CalfTrainer.Android.BusinessLogic
 {
 	public class Exercise
 	{
+		#region Definitions
+
 		private readonly ExerciseConfiguration mConfiguration;
 		private SubExercise mCurrentSubExercise;
 		private bool mIsDone;
+
+		#endregion Definitions
+
+		#region Constructor(s)
 
 		public Exercise(ExerciseConfiguration configuration)
 		{
@@ -21,6 +27,10 @@ namespace CalfTrainer.Android.BuisinessLogic
 			mCurrentSubExercise = SubExercise.Undefined;
 		}
 
+		#endregion Constructor(s)
+
+		#region Current counters
+
 		public uint LongLeftCount { get; private set; }
 		public uint ShortLeftCount { get; private set; }
 		public uint LongRightCount { get; private set; }
@@ -29,18 +39,30 @@ namespace CalfTrainer.Android.BuisinessLogic
 		public uint RemainingPreparationTime { get; private set; }
 		public uint RemainingSubExerciseTime { get; private set; }
 
+		#endregion Current counters
+
+		#region Remaining total time
+
 		public TimeSpan RemainingTotalTime => TimeSpan.FromSeconds(
 			(mConfiguration.DurationPerStance + mConfiguration.PreparationDuration + 1) // + 1 for switching
 			* (LongLeftCount + LongRightCount + ShortLeftCount + ShortRightCount - 1) // -1 because the time of the last one depends on the remaining time.
-			+ RemainingPreparationTime + RemainingSubExerciseTime 
+			+ RemainingPreparationTime + RemainingSubExerciseTime
 			+ 1); // First tick is used to start.
+
+		#endregion Remaining total time
+
+		#region Event ActiveSubExerciseChanged
 
 		private void SignalActiveSubExerciseChanged(SubExercise newSubExercise)
 		{
-			ActiveSubExerciseChanged?.Invoke(this, new ActiveSubExcersizeChangedEventArgs(mCurrentSubExercise, newSubExercise));
+			ActiveSubExerciseChanged?.Invoke(this, new ActiveSubExerciseChangedEventArgs(mCurrentSubExercise, newSubExercise));
 		}
 
-		public event EventHandler<ActiveSubExcersizeChangedEventArgs> ActiveSubExerciseChanged;
+		public event EventHandler<ActiveSubExerciseChangedEventArgs> ActiveSubExerciseChanged;
+
+		#endregion Event ActiveSubExerciseChanged
+
+		#region Event IsDone
 
 		private void SignalIsDone()
 		{
@@ -49,7 +71,9 @@ namespace CalfTrainer.Android.BuisinessLogic
 
 		public event EventHandler IsDone;
 
-		public void Tick()
+		#endregion Event IsDone
+
+		public void HandleNextClockTick()
 		{
 			if (!mIsDone)
 			{
@@ -81,6 +105,8 @@ namespace CalfTrainer.Android.BuisinessLogic
 			}
 		}
 
+		#region Helper methods
+
 		private void NextSubExercise()
 		{
 			SubExercise newExercise;
@@ -90,18 +116,23 @@ namespace CalfTrainer.Android.BuisinessLogic
 				case SubExercise.Undefined:
 					newExercise = SubExercise.LongLeft;
 					break;
+
 				case SubExercise.LongLeft:
 					newExercise = SubExercise.LongRight;
 					break;
+
 				case SubExercise.LongRight:
 					newExercise = GetCountForSubExercise(SubExercise.LongLeft) > 0 ? SubExercise.LongLeft : SubExercise.ShortLeft;
 					break;
+
 				case SubExercise.ShortLeft:
 					newExercise = SubExercise.ShortRight;
 					break;
+
 				case SubExercise.ShortRight:
 					newExercise = GetCountForSubExercise(SubExercise.ShortLeft) > 0 ? SubExercise.ShortLeft : SubExercise.Undefined;
 					break;
+
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
@@ -119,14 +150,19 @@ namespace CalfTrainer.Android.BuisinessLogic
 			{
 				case SubExercise.Undefined:
 					return 0;
+
 				case SubExercise.LongLeft:
 					return LongLeftCount;
+
 				case SubExercise.ShortLeft:
 					return ShortLeftCount;
+
 				case SubExercise.LongRight:
 					return LongRightCount;
+
 				case SubExercise.ShortRight:
 					return ShortRightCount;
+
 				default:
 					throw new ArgumentOutOfRangeException(nameof(subExercise), subExercise, null);
 			}
@@ -138,21 +174,28 @@ namespace CalfTrainer.Android.BuisinessLogic
 			{
 				case SubExercise.Undefined:
 					break;
+
 				case SubExercise.LongLeft:
 					LongLeftCount--;
 					break;
+
 				case SubExercise.ShortLeft:
 					ShortLeftCount--;
 					break;
+
 				case SubExercise.LongRight:
 					LongRightCount--;
 					break;
+
 				case SubExercise.ShortRight:
 					ShortRightCount--;
 					break;
+
 				default:
 					throw new ArgumentOutOfRangeException(nameof(subExercise), subExercise, null);
 			}
 		}
+
+		#endregion Helper methods
 	}
 }

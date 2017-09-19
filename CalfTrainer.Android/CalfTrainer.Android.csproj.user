@@ -3,7 +3,7 @@
   <PropertyGroup>
     <SelectedDevice>Samsung SM-G900F</SelectedDevice>
     <DefaultDevice>AVD_for_Samsung_S5_Arm</DefaultDevice>
-    <AndroidDesignerPreferredDevice>Samsung S5</AndroidDesignerPreferredDevice>
+    <AndroidDesignerPreferredDevice>Nexus 5</AndroidDesignerPreferredDevice>
     <AndroidDesignerPreferredTheme>Theme.NoTitleBar.Fullscreen</AndroidDesignerPreferredTheme>
   </PropertyGroup>
 </Project>

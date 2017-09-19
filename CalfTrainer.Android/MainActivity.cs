@@ -4,7 +4,7 @@ using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
 using Android.Widget;
-using CalfTrainer.Android.BuisinessLogic;
+using CalfTrainer.Android.BusinessLogic;
 
 namespace CalfTrainer.Android
 {
@@ -19,7 +19,8 @@ namespace CalfTrainer.Android
 		private TextView mCounterLeftShortCalf;
 		private TextView mCounterRightShortCalf;
 		private TextView mTotalTimeRemaining;
-		private Button mStartStopButton;
+		private Button mStartPauseButton;
+		private Button mStopButton;
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -41,32 +42,51 @@ namespace CalfTrainer.Android
 			mCounterLeftShortCalf = FindViewById<TextView>(Resource.Id.textViewCounterLeftShortCalf);
 			mCounterRightShortCalf = FindViewById<TextView>(Resource.Id.textViewCounterRightShortCalf);
 			mTotalTimeRemaining = FindViewById<TextView>(Resource.Id.textViewTotalTimeRemaining);
-			mStartStopButton = FindViewById<Button>(Resource.Id.buttonStart);
 
-			mStartStopButton.Click += StartStopButtonOnClick;
+			mStartPauseButton = FindViewById<Button>(Resource.Id.buttonStart);
+			mStartPauseButton.Click += StartPauseButtonOnClick;
 
-			// Prepare for a new exercise.
+			mStopButton = FindViewById<Button>(Resource.Id.buttonStop);
+			mStopButton.Click += StopButtonOnClick;
+
 			mExerciseService.Prepare();
 		}
+
+
 
 		private void ExerciseServiceOnExerciseIsDone(object sender, EventArgs eventArgs)
 		{
-			mExerciseService.Prepare();
-			mStartStopButton.Enabled = true;
+			mStartPauseButton.Text = "Start";
+			mStopButton.Enabled = false;
 		}
 
-		private void StartStopButtonOnClick(object sender, EventArgs eventArgs)
+		private void StartPauseButtonOnClick(object sender, EventArgs eventArgs)
 		{
-			mStartStopButton.Enabled = false;
-			mExerciseService.Start();
+			if (mExerciseService.IsRunning)
+			{
+				mExerciseService.Pause();
+				mStartPauseButton.Text = "Resume";
+			}
+			else
+			{
+				mExerciseService.Start();
+				mStartPauseButton.Text = "Pause";
+			}
+
+			mStopButton.Enabled = true;
 		}
 
-		private void ExerciseServiceOnActiveSubExerciseChanged(object sender, ActiveSubExcersizeChangedEventArgs activeSubExcersizeChangedEventArgs)
+		private void StopButtonOnClick(object sender, EventArgs eventArgs)
+		{
+			mExerciseService.Stop();
+		}
+
+		private void ExerciseServiceOnActiveSubExerciseChanged(object sender, ActiveSubExerciseChangedEventArgs activeSubExerciseChangedEventArgs)
 		{
 			RunOnUiThread(() =>
 			{
-				var textViewOldSubExercise = GetTextViewForSubExercise(activeSubExcersizeChangedEventArgs.OldSubExercise);
-				var textViewNewSubExercise = GetTextViewForSubExercise(activeSubExcersizeChangedEventArgs.NewSubExercise);
+				var textViewOldSubExercise = GetTextViewForSubExercise(activeSubExerciseChangedEventArgs.OldSubExercise);
+				var textViewNewSubExercise = GetTextViewForSubExercise(activeSubExerciseChangedEventArgs.NewSubExercise);
 
 				textViewOldSubExercise?.SetTextColor(Color.WhiteSmoke);
 				textViewNewSubExercise?.SetTextColor(Color.Green);
