@@ -8,7 +8,7 @@ using CalfTrainer.Android.BusinessLogic;
 
 namespace CalfTrainer.Android
 {
-	[Activity(Label = "Kuiten trainer", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
+	[Activity(Label = "CalfTrainer", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
 	public class MainActivity : Activity
 	{
 		private ExerciseService mExerciseService;

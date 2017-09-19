@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:p1="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:p1="http://schemas.android.com/apk/res/android"
     p1:layout_width="match_parent"
     p1:layout_height="match_parent"
     p1:id="@+id/mainLayout"
-    p1:orientation="vertical"
     p1:keepScreenOn="true">
     <TextView
         p1:text="8"
-        p1:layout_width="wrap_content"
+        p1:layout_width="match_parent"
         p1:layout_height="wrap_content"
         p1:id="@+id/textViewMainCounter"
         p1:textSize="128dp"
-        p1:layout_gravity="center_horizontal" />
+        p1:layout_gravity="center_horizontal"
+        p1:gravity="center_horizontal"
+        p1:layout_alignParentTop="true" />
     <TextView
         p1:text="@string/longCalfs"
-        p1:layout_width="wrap_content"
+        p1:layout_width="match_parent"
         p1:layout_height="wrap_content"
         p1:id="@+id/textViewTitleLongCalf"
         p1:textSize="28dp"
-        p1:layout_gravity="center_horizontal" />
+        p1:layout_gravity="center_horizontal"
+        p1:layout_below="@id/textViewMainCounter"
+        p1:gravity="center_horizontal" />
     <LinearLayout
+        p1:id="@+id/linearViewLongCalfCounters"
         p1:orientation="horizontal"
         p1:layout_height="wrap_content"
-        p1:layout_width="match_parent">
+        p1:layout_width="match_parent"
+        p1:layout_below="@id/textViewTitleLongCalf">
         <RelativeLayout
             p1:layout_width="0dp"
             p1:layout_height="wrap_content"
@@ -66,15 +71,18 @@
     </LinearLayout>
     <TextView
         p1:text="@string/shortCalfs"
-        p1:layout_width="wrap_content"
+        p1:layout_width="match_parent"
         p1:layout_height="wrap_content"
-        p1:id="@+id/textViewTitleLongCalf"
+        p1:id="@+id/textViewTitleShortCalf"
         p1:textSize="28dp"
-        p1:layout_gravity="center_horizontal" />
+        p1:layout_gravity="center_horizontal"
+        p1:layout_below="@id/linearViewLongCalfCounters"
+        p1:gravity="center_horizontal" />
     <LinearLayout
         p1:orientation="horizontal"
         p1:layout_height="wrap_content"
-        p1:layout_width="match_parent">
+        p1:layout_width="match_parent"
+        p1:layout_below="@id/textViewTitleShortCalf">
         <RelativeLayout
             p1:layout_width="0dp"
             p1:layout_height="wrap_content"
@@ -116,18 +124,12 @@
                 p1:textSize="24dp" />
         </RelativeLayout>
     </LinearLayout>
-    <TextView
-        p1:text="@string/totalTimeRemaining"
-        p1:layout_width="wrap_content"
-        p1:layout_height="wrap_content"
-        p1:id="@+id/textViewTotalTimeRemaining"
-        p1:textSize="16dp"
-        p1:layout_gravity="center_horizontal"
-        p1:layout_margin="10dp" />
     <LinearLayout
+        p1:id="@+id/linearViewButtons"
         p1:orientation="horizontal"
         p1:layout_height="wrap_content"
-        p1:layout_width="match_parent">
+        p1:layout_width="match_parent"
+        p1:layout_alignParentBottom="true">
         <Button
             p1:text="@string/start"
             p1:layout_width="match_parent"
@@ -144,4 +146,14 @@
             p1:textSize="36dp"
             p1:enabled="false" />
     </LinearLayout>
-</LinearLayout>
+    <TextView
+        p1:text="@string/totalTimeRemaining"
+        p1:layout_width="match_parent"
+        p1:layout_height="wrap_content"
+        p1:id="@+id/textViewTotalTimeRemaining"
+        p1:textSize="16dp"
+        p1:layout_gravity="center_horizontal"
+        p1:layout_margin="10dp"
+        p1:layout_above="@id/linearViewButtons"
+        p1:gravity="center_horizontal" />
+</RelativeLayout>
