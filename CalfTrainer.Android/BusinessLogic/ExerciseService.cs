@@ -3,15 +3,6 @@ using System.Timers;
 
 namespace CalfTrainer.Android.BusinessLogic
 {
-	public enum SubExercise
-	{
-		Undefined,
-		LongLeft,
-		ShortLeft,
-		LongRight,
-		ShortRight
-	}
-
 	public class ExerciseService
 	{
 		#region Definitions

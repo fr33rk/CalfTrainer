@@ -59,6 +59,7 @@
     <Compile Include="BusinessLogic\ExerciseChangedEventArgs.cs" />
     <Compile Include="BusinessLogic\ExerciseService.cs" />
     <Compile Include="BusinessLogic\ExerciseConfiguration.cs" />
+    <Compile Include="BusinessLogic\SubExercise.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -86,6 +87,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PL.CalfTrainer.Business\PL.CalfTrainer.Business.csproj">
+      <Project>{6352edce-758d-4a89-8e19-37c107415639}</Project>
+      <Name>PL.CalfTrainer.Business</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
