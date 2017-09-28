@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Threading;
-using Newtonsoft.Json;
 using PL.CalfTrainer.Business.Entities;
+using PL.CalfTrainer.Infrastructure.Services;
 
 namespace PL.CalfTrainer.Business.Services
 {
@@ -9,23 +8,28 @@ namespace PL.CalfTrainer.Business.Services
 	{
 		private Exercise mExercise;
 		private ExerciseConfiguration mExerciseConfiguration;
-		private Timer mTimer;
+		private ITimerService mTimerService;
+		private const int TIMER_INTERVAL_MS = 1000;
 
-		protected ExerciseService(Exercise exercise, ExerciseConfiguration configuration)
+		protected ExerciseService(Exercise exercise, ExerciseConfiguration configuration, ITimerService timerService)
 		{
 			mExercise = exercise;
 			mExerciseConfiguration = configuration;
+			mTimerService = timerService;
+			mTimerService.Elapsed += TimerServiceElapsed;
 		}
 
-		public static ExerciseService ExerciseServiceFromJson(string asJson, ExerciseConfiguration configuration)
+		public static ExerciseService ExerciseServiceFromJson(string asJson, ExerciseConfiguration configuration, ITimerService timerService)
 		{
 			try
 			{
-				var exercise = string.IsNullOrEmpty(asJson) 
-					? new Exercise(configuration) 
-					: JsonConvert.DeserializeObject<Exercise>(asJson);
+				//var exercise = string.IsNullOrEmpty(asJson)
+				//	? new Exercise(configuration)
+				//	: JsonConvert.DeserializeObject<Exercise>(asJson);
 
-				return new ExerciseService(exercise, configuration);
+				//return new ExerciseService(exercise, configuration, timerService);
+
+				return null;
 			}
 			catch (Exception e)
 			{
@@ -36,37 +40,41 @@ namespace PL.CalfTrainer.Business.Services
 
 		public string ToJson()
 		{
-			return JsonConvert.SerializeObject(mExercise);
+			return String.Empty; //JsonConvert.SerializeObject(mExercise);
 		}
 
 		public void PrepareForNewExercise()
 		{
-			
 		}
 
 		public void Start()
 		{
-			
+			mTimerService.Start(TIMER_INTERVAL_MS);
 		}
 
 		public void Pause()
 		{
-			
+			mTimerService.Pause();
 		}
 
 		public void Resume()
 		{
-			
+			mTimerService.Resume();
 		}
 
 		public void Stop()
 		{
-			
+			mTimerService.Stop();
+			mExercise.Reset();
+			// Inform
 		}
 
-		public bool IsRunning;
+		public bool IsRunning => mTimerService.IsRunning;
 
-
-
+		private void TimerServiceElapsed(object sender, EventArgs args)
+		{
+			// Handle next tick
+			// Inform whoever is interested.
+		}
 	}
 }

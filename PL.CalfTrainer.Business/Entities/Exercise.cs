@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using Newtonsoft.Json;
 
 namespace PL.CalfTrainer.Business.Entities
 {
@@ -19,6 +17,13 @@ namespace PL.CalfTrainer.Business.Entities
 		{
 			mConfiguration = configuration;
 
+			Reset();
+		}
+
+		#endregion Constructor(s)
+
+		public void Reset()
+		{
 			LongLeftCount = mConfiguration.NoOfRepetitions;
 			ShortLeftCount = mConfiguration.NoOfRepetitions;
 			LongRightCount = mConfiguration.NoOfRepetitions;
@@ -27,8 +32,6 @@ namespace PL.CalfTrainer.Business.Entities
 			RemainingSubExerciseTime = mConfiguration.DurationPerStance;
 			CurrentSubExercise = SubExercise.Undefined;
 		}
-
-		#endregion Constructor(s)
 
 		#region Current counters
 
