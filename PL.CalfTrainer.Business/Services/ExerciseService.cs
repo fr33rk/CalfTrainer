@@ -1,5 +1,7 @@
 ﻿using System;
-using PL.CalfTrainer.Business.Entities;
+using Newtonsoft.Json;
+using PL.CalfTrainer.Entities;
+using PL.CalfTrainer.Infrastructure.EventArgs;
 using PL.CalfTrainer.Infrastructure.Services;
 
 namespace PL.CalfTrainer.Business.Services
@@ -23,28 +25,23 @@ namespace PL.CalfTrainer.Business.Services
 		{
 			try
 			{
-				//var exercise = string.IsNullOrEmpty(asJson)
-				//	? new Exercise(configuration)
-				//	: JsonConvert.DeserializeObject<Exercise>(asJson);
-
-				//return new ExerciseService(exercise, configuration, timerService);
-
-				return null;
+				return new ExerciseService(new Exercise(configuration), configuration, timerService );
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e);
 				throw;
 			}
 		}
 
 		public string ToJson()
 		{
-			return String.Empty; //JsonConvert.SerializeObject(mExercise);
+			return JsonConvert.SerializeObject(mExercise);
 		}
 
 		public void PrepareForNewExercise()
 		{
+			mExercise = new Exercise(mExerciseConfiguration);
+			SignalExerciseChanged();
 		}
 
 		public void Start()
@@ -76,5 +73,18 @@ namespace PL.CalfTrainer.Business.Services
 			// Handle next tick
 			// Inform whoever is interested.
 		}
+
+
+		#region Event ExersizeChanged
+
+		private void SignalExerciseChanged()
+		{
+			ExerciseChanged?.Invoke(this, new ExerciseChangedEventArgs(mExercise));
+		}
+
+		public event EventHandler<ExerciseChangedEventArgs> ExerciseChanged;
+
+		#endregion Event ExersizeChanged
+
 	}
 }

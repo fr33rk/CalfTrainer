@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PL.CalfTrainer.Business.Entities
+namespace PL.CalfTrainer.Entities
 {
     public class ExersiseExecution
     {

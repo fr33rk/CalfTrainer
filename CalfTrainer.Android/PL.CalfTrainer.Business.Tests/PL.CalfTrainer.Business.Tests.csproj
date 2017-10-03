@@ -47,6 +47,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExerciseServiceTests.cs" />
     <Compile Include="ExerciseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimerServiceTests.cs" />
@@ -55,6 +56,14 @@
     <ProjectReference Include="..\..\PL.CalfTrainer.Business\PL.CalfTrainer.Business.csproj">
       <Project>{6352edce-758d-4a89-8e19-37c107415639}</Project>
       <Name>PL.CalfTrainer.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PL.CalfTrainer.Entities\PL.CalfTrainer.Entities.csproj">
+      <Project>{33a79cad-31e6-4b53-9baf-0c4b1a74a8fe}</Project>
+      <Name>PL.CalfTrainer.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PL.CalfTrainer.Infrastructure\PL.CalfTrainer.Infrastructure.csproj">
+      <Project>{6b2c6348-49b7-4504-bcdb-e43ebfb69921}</Project>
+      <Name>PL.CalfTrainer.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

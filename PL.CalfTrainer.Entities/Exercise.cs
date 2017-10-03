@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PL.CalfTrainer.Business.Entities
+namespace PL.CalfTrainer.Entities
 {
 	public class Exercise
 	{
@@ -56,5 +56,43 @@ namespace PL.CalfTrainer.Business.Entities
 			+ 1); // First tick is used to start.
 
 		#endregion Remaining total time
+
+		#region Equals
+
+		protected bool Equals(Exercise other)
+		{
+			return LongLeftCount == other.LongLeftCount
+				   && ShortLeftCount == other.ShortLeftCount
+				   && LongRightCount == other.LongRightCount
+				   && ShortRightCount == other.ShortRightCount
+				   && RemainingPreparationTime == other.RemainingPreparationTime
+				   && RemainingSubExerciseTime == other.RemainingSubExerciseTime
+				   && CurrentSubExercise == other.CurrentSubExercise;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != GetType()) return false;
+			return Equals((Exercise)obj);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				var hashCode = (int)LongLeftCount;
+				hashCode = (hashCode * 397) ^ (int)ShortLeftCount;
+				hashCode = (hashCode * 397) ^ (int)LongRightCount;
+				hashCode = (hashCode * 397) ^ (int)ShortRightCount;
+				hashCode = (hashCode * 397) ^ (int)RemainingPreparationTime;
+				hashCode = (hashCode * 397) ^ (int)RemainingSubExerciseTime;
+				hashCode = (hashCode * 397) ^ (int)CurrentSubExercise;
+				return hashCode;
+			}
+		}
+
+		#endregion Equals
 	}
 }

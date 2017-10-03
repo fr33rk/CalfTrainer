@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CalfTrainer.Android\PL.CalfTrainer.Infrastructure\PL.CalfTrainer.Infrastructure.csproj" />
+    <ProjectReference Include="..\PL.CalfTrainer.Entities\PL.CalfTrainer.Entities.csproj" />
   </ItemGroup>
 
 </Project>
