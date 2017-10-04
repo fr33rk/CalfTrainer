@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PL.CalfTrainer.Entities
 {
@@ -8,6 +9,8 @@ namespace PL.CalfTrainer.Entities
 
 		private readonly ExerciseConfiguration mConfiguration;
 		private bool mIsDone;
+		private const char KEY_VALUE_SEPARATOR = '=';
+		private const string KEY_VALUE_PAIR_SEPARATOR = ";";
 
 		#endregion Definitions
 
@@ -18,6 +21,21 @@ namespace PL.CalfTrainer.Entities
 			mConfiguration = configuration;
 
 			Reset();
+		}
+
+		public static Exercise ExerciseFromConfiguration(ExerciseConfiguration configuration)
+		{
+			return new Exercise(configuration);
+		}
+
+		public static Exercise ExerciseFromString(string exerciseAsString, ExerciseConfiguration configurationUsedForReset)
+		{
+			var keyValuePairFromString = GetNameValuePairsFromString(exerciseAsString);
+
+			return new Exercise(configurationUsedForReset)
+			{
+				LongLeftCount = keyValuePairFromString[nameof(LongLeftCount)]
+			};
 		}
 
 		#endregion Constructor(s)
@@ -35,13 +53,13 @@ namespace PL.CalfTrainer.Entities
 
 		#region Current counters
 
-		public uint LongLeftCount { get; internal set; }
-		public uint ShortLeftCount { get; internal set; }
-		public uint LongRightCount { get; internal set; }
-		public uint ShortRightCount { get; internal set; }
+		public int LongLeftCount { get; internal set; }
+		public int ShortLeftCount { get; internal set; }
+		public int LongRightCount { get; internal set; }
+		public int ShortRightCount { get; internal set; }
 
-		public uint RemainingPreparationTime { get; internal set; }
-		public uint RemainingSubExerciseTime { get; internal set; }
+		public int RemainingPreparationTime { get; internal set; }
+		public int RemainingSubExerciseTime { get; internal set; }
 
 		#endregion Current counters
 
@@ -94,5 +112,43 @@ namespace PL.CalfTrainer.Entities
 		}
 
 		#endregion Equals
+
+		public override string ToString()
+		{
+			var keyValuePairStrings = new List<string>
+			{
+				CreateKeyValuePairString(nameof(LongLeftCount), LongLeftCount),
+				CreateKeyValuePairString(nameof(LongRightCount), LongRightCount),
+				CreateKeyValuePairString(nameof(ShortLeftCount), ShortLeftCount),
+				CreateKeyValuePairString(nameof(ShortRightCount), ShortRightCount),
+				CreateKeyValuePairString(nameof(RemainingPreparationTime), RemainingPreparationTime),
+				CreateKeyValuePairString(nameof(RemainingSubExerciseTime), RemainingSubExerciseTime)
+			};
+
+			return string.Join(KEY_VALUE_PAIR_SEPARATOR, keyValuePairStrings);
+		}
+
+		private static string CreateKeyValuePairString(string key, int value)
+		{
+			return $"{key}{KEY_VALUE_SEPARATOR}{value}";
+		}
+
+		private static Dictionary<string, int> GetNameValuePairsFromString(string exerciseAsString)
+		{
+			var retValue = new Dictionary<string, int>();
+
+			foreach (var s in exerciseAsString.Split(';'))
+			{
+				AddNameValueToDictionary(retValue, s);
+			}
+
+			return retValue;
+		}
+
+		private static void AddNameValueToDictionary(IDictionary<string, int> dictionary, string keyValuePairString)
+		{
+			var keyValuePair = keyValuePairString.Split(KEY_VALUE_SEPARATOR);
+			dictionary[keyValuePair[0]] = Convert.ToInt32(keyValuePair[1]);
+		}
 	}
 }

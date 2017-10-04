@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 using PL.CalfTrainer.Entities;
 using PL.CalfTrainer.Infrastructure.EventArgs;
 using PL.CalfTrainer.Infrastructure.Services;
@@ -21,7 +20,7 @@ namespace PL.CalfTrainer.Business.Services
 			mTimerService.Elapsed += TimerServiceElapsed;
 		}
 
-		public static ExerciseService ExerciseServiceFromJson(string asJson, ExerciseConfiguration configuration, ITimerService timerService)
+		public static ExerciseService ExerciseServiceFromJson(string stateAsString, ExerciseConfiguration configuration, ITimerService timerService)
 		{
 			try
 			{
@@ -33,9 +32,9 @@ namespace PL.CalfTrainer.Business.Services
 			}
 		}
 
-		public string ToJson()
+		public string StateToString()
 		{
-			return JsonConvert.SerializeObject(mExercise);
+			return mExercise.ToString();
 		}
 
 		public void PrepareForNewExercise()

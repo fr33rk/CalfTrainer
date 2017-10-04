@@ -9,8 +9,8 @@
 			PreparationDuration = 3;
 		}
 
-		public uint DurationPerStance { get; set; }
-		public uint PreparationDuration { get; set; }
-		public uint NoOfRepetitions { get; set; }
+		public int DurationPerStance { get; set; }
+		public int PreparationDuration { get; set; }
+		public int NoOfRepetitions { get; set; }
 	}
 }
