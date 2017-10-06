@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using PL.CalfTrainer.Entities;
 
 namespace PL.CalfTrainer.Business.Tests
@@ -6,6 +7,16 @@ namespace PL.CalfTrainer.Business.Tests
 	[TestFixture]
 	public class ExerciseTests
 	{
+		private static ExerciseConfiguration CreateTestExerciseConfiguration()
+		{
+			return new ExerciseConfiguration
+			{
+				DurationPerStance = 8,
+				NoOfRepetitions = 8,
+				PreparationDuration = 3
+			};
+		}
+
 		[Test]
 		public void Exercise_Constructed_CountersSet()
 		{
@@ -41,7 +52,7 @@ namespace PL.CalfTrainer.Business.Tests
 				PreparationDuration = 78
 			};
 			var unitUnderTest = new Exercise(stubConfiguration);
-			const string expectedResult = "LongLeftCount=2109;LongRightCount=2109;ShortLeftCount=2109;ShortRightCount=2109;RemainingPreparationTime=78;RemainingSubExerciseTime=19";
+			const string expectedResult = "LongLeftCount=2109;LongRightCount=2109;ShortLeftCount=2109;ShortRightCount=2109;RemainingPreparationTime=78;RemainingSubExerciseTime=19;CurrentSubExercise=0";
 
 			// Act
 			var actualResult = unitUnderTest.ToString();
@@ -53,7 +64,55 @@ namespace PL.CalfTrainer.Business.Tests
 		[Test]
 		public void Exercise_ExerciseFromString_ReturnsCorrectObject()
 		{
-			
+			// Arrange
+			const string exerciseAsString = "LongLeftCount=1;LongRightCount=2;ShortLeftCount=3;ShortRightCount=4;RemainingPreparationTime=5;RemainingSubExerciseTime=6;CurrentSubExercise=2";
+			var stubConfiguration = new ExerciseConfiguration();
+
+			// Act
+			var unitUnderTest = Exercise.ExerciseFromString(exerciseAsString, stubConfiguration);
+
+			// Assert
+			Assert.AreEqual(1, unitUnderTest.LongLeftCount);
+			Assert.AreEqual(2, unitUnderTest.LongRightCount);
+			Assert.AreEqual(3, unitUnderTest.ShortLeftCount);
+			Assert.AreEqual(4, unitUnderTest.ShortRightCount);
+			Assert.AreEqual(5, unitUnderTest.RemainingPreparationTime);
+			Assert.AreEqual(6, unitUnderTest.RemainingSubExerciseTime);
+			Assert.AreEqual((SubExercise)2, unitUnderTest.CurrentSubExercise);
+		}
+
+		[Test]
+		public void Exercise_ExerciseFromInvalidString_ReturnsResetObject()
+		{
+			// Arrange
+			const string exerciseAsString = "invalid sting";
+			var stubConfiguration = CreateTestExerciseConfiguration();
+
+			// Act
+			var unitUnderTest = Exercise.ExerciseFromString(exerciseAsString, stubConfiguration);
+
+			// Assert
+			Assert.AreEqual(8, unitUnderTest.LongLeftCount);
+			Assert.AreEqual(8, unitUnderTest.LongRightCount);
+			Assert.AreEqual(8, unitUnderTest.ShortLeftCount);
+			Assert.AreEqual(8, unitUnderTest.ShortRightCount);
+			Assert.AreEqual(3, unitUnderTest.RemainingPreparationTime);
+			Assert.AreEqual(8, unitUnderTest.RemainingSubExerciseTime);
+		}
+
+		[Test]
+		public void Exercise_RemainingTotalTimeWhenStarted_ReturnsCorrectValue()
+		{
+			// Arrange
+			var stubConfiguration = CreateTestExerciseConfiguration();
+			var expectedRemainingTime = TimeSpan.FromSeconds((8 + 3 + 1) * 8 * 4); // ((TimePerSubExercise + PrepTime + 1s for switching) * Repetitions * NoOfSubExercises)
+
+			// Act
+			var unitUnderTest = Exercise.ExerciseFromConfiguration(stubConfiguration);
+
+			// Assert
+			Assert.AreEqual(expectedRemainingTime, unitUnderTest.RemainingTotalTime);
+
 		}
 	}
 }

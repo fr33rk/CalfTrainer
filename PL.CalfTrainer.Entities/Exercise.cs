@@ -30,12 +30,25 @@ namespace PL.CalfTrainer.Entities
 
 		public static Exercise ExerciseFromString(string exerciseAsString, ExerciseConfiguration configurationUsedForReset)
 		{
-			var keyValuePairFromString = GetNameValuePairsFromString(exerciseAsString);
-
-			return new Exercise(configurationUsedForReset)
+			try
 			{
-				LongLeftCount = keyValuePairFromString[nameof(LongLeftCount)]
-			};
+				var keyValuePairFromString = GetNameValuePairsFromString(exerciseAsString);
+
+				return new Exercise(configurationUsedForReset)
+				{
+					LongLeftCount = keyValuePairFromString[nameof(LongLeftCount)],
+					LongRightCount = keyValuePairFromString[nameof(LongRightCount)],
+					ShortLeftCount = keyValuePairFromString[nameof(ShortLeftCount)],
+					ShortRightCount = keyValuePairFromString[nameof(ShortRightCount)],
+					RemainingPreparationTime = keyValuePairFromString[nameof(RemainingPreparationTime)],
+					RemainingSubExerciseTime = keyValuePairFromString[nameof(RemainingSubExerciseTime)],
+					CurrentSubExercise = (SubExercise)keyValuePairFromString[nameof(CurrentSubExercise)]
+				};
+			}
+			catch (Exception e)
+			{
+				return ExerciseFromConfiguration(configurationUsedForReset);
+			}
 		}
 
 		#endregion Constructor(s)
@@ -113,6 +126,8 @@ namespace PL.CalfTrainer.Entities
 
 		#endregion Equals
 
+		#region To and from String
+
 		public override string ToString()
 		{
 			var keyValuePairStrings = new List<string>
@@ -122,7 +137,8 @@ namespace PL.CalfTrainer.Entities
 				CreateKeyValuePairString(nameof(ShortLeftCount), ShortLeftCount),
 				CreateKeyValuePairString(nameof(ShortRightCount), ShortRightCount),
 				CreateKeyValuePairString(nameof(RemainingPreparationTime), RemainingPreparationTime),
-				CreateKeyValuePairString(nameof(RemainingSubExerciseTime), RemainingSubExerciseTime)
+				CreateKeyValuePairString(nameof(RemainingSubExerciseTime), RemainingSubExerciseTime),
+				CreateKeyValuePairString(nameof(CurrentSubExercise), (int)CurrentSubExercise)
 			};
 
 			return string.Join(KEY_VALUE_PAIR_SEPARATOR, keyValuePairStrings);
@@ -150,5 +166,7 @@ namespace PL.CalfTrainer.Entities
 			var keyValuePair = keyValuePairString.Split(KEY_VALUE_SEPARATOR);
 			dictionary[keyValuePair[0]] = Convert.ToInt32(keyValuePair[1]);
 		}
+
+		#endregion To and from String
 	}
 }
