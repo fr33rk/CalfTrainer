@@ -20,19 +20,26 @@ namespace PL.CalfTrainer.Business.Services
 
 		public void ExerciseFinished(Exercise exercise)
 		{
-			// Test how far the test is finished
-			// Create a ExerciseResult object and store it.
-			throw new NotImplementedException();
+			var exerciseExecution = new ExersiseExecution(DateTime.Now, exercise.PercentageCompleted);
+			mDataService.Add(exerciseExecution);
+			SignalDailyExerciseTrackerChanged(GetExecutionsOfDay(DateTime.Today));
 		}
 
 		public DailyExerciseTracker GetExecutionsOfDay(DateTime day)
 		{
-			throw new NotImplementedException();
+			var executions = mDataService.GetByPeriod(DateTime.Today, DateTime.Today.AddDays(1).AddTicks(-1));
+
+			return new DailyExerciseTracker(DateTime.Today, executions);
 		}
 
 		public IList<DailyExerciseTracker> GetExecutionsOfPeriod(DateTime startOfPeriod, DateTime endOfPeriod)
 		{
 			throw new NotImplementedException();
+		}
+
+		private void SignalDailyExerciseTrackerChanged(DailyExerciseTracker dailyExerciseTracker)
+		{
+			DailyExerciseTrackerChanged?.Invoke(this, new DailyExerciseTrackerChangedArgs(dailyExerciseTracker));
 		}
 
 		public event EventHandler<DailyExerciseTrackerChangedArgs> DailyExerciseTrackerChanged;

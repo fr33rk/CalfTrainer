@@ -2,16 +2,17 @@
 
 namespace PL.CalfTrainer.Entities
 {
-    public class ExersiseExecution
+	public class ExersiseExecution
     {
-	    public enum ExersizeResult
+	    /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
+	    public ExersiseExecution(DateTime executionTime, int percentageCompleted)
 	    {
-		    Started,
-			PartiallyFinished,
-			Finished
+		    ExecutionTime = executionTime;
+		    PercentageCompleted = percentageCompleted;
 	    }
 
 	    public DateTime ExecutionTime { get; set; }
-	    public ExersizeResult Result { get; set; }
+
+	    public int PercentageCompleted { get; set; }
     }
 }

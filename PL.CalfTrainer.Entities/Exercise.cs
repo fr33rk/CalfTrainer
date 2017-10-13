@@ -168,5 +168,15 @@ namespace PL.CalfTrainer.Entities
 		}
 
 		#endregion To and from String
+
+		public int PercentageCompleted
+		{
+			get
+			{
+				var totalNoOfSubExercises = mConfiguration.NoOfRepetitions * 4;
+				var remainingNoOfSubExercises = LongLeftCount + LongRightCount + ShortLeftCount + ShortRightCount;
+				return (totalNoOfSubExercises - remainingNoOfSubExercises) / totalNoOfSubExercises * 100;
+			}
+		}
 	}
 }
