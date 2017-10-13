@@ -20,7 +20,7 @@ namespace PL.CalfTrainer.Business.Services
 			mTimerService.Elapsed += TimerServiceElapsed;
 		}
 
-		public static ExerciseService ExerciseServiceFromJson(string stateAsString, ExerciseConfiguration configuration, ITimerService timerService)
+		public static ExerciseService ExerciseServiceFromString(string stateAsString, ExerciseConfiguration configuration, ITimerService timerService)
 		{
 			try
 			{
@@ -71,6 +71,7 @@ namespace PL.CalfTrainer.Business.Services
 		{
 			// Handle next tick
 			// Inform whoever is interested.
+			SignalExerciseChanged();
 		}
 
 
