@@ -133,7 +133,7 @@ namespace PL.CalfTrainer.Entities
 
 		#endregion To and from String
 
-		public int PercentageCompleted
+		public virtual int PercentageCompleted
 		{
 			get
 			{

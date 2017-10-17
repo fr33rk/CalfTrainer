@@ -12,15 +12,17 @@ namespace PL.CalfTrainer.Business.Services
 	public class ExerciseTrackerService : IExerciseTrackerService
 	{
 		private IExerciseTrackerDataService mDataService;
+		private ITimeProvider mTimeProvider;
 
-		public ExerciseTrackerService(IExerciseTrackerDataService dataService)
+		public ExerciseTrackerService(IExerciseTrackerDataService dataService, ITimeProvider timeProvider)
 		{
 			mDataService = dataService;
+			mTimeProvider = timeProvider;
 		}
 
 		public void ExerciseFinished(Exercise exercise)
 		{
-			var exerciseExecution = new ExersiseExecution(DateTime.Now, exercise.PercentageCompleted);
+			var exerciseExecution = new ExersiseExecution(mTimeProvider.Today, exercise.PercentageCompleted);
 			mDataService.Add(exerciseExecution);
 			SignalDailyExerciseTrackerChanged(GetExecutionsOfDay(DateTime.Today));
 		}
@@ -29,7 +31,7 @@ namespace PL.CalfTrainer.Business.Services
 		{
 			var executions = mDataService.GetByPeriod(DateTime.Today, DateTime.Today.AddDays(1).AddTicks(-1));
 
-			return new DailyExerciseTracker(DateTime.Today, executions);
+			return new DailyExerciseTracker(mTimeProvider.Today, executions);
 		}
 
 		public IList<DailyExerciseTracker> GetExecutionsOfPeriod(DateTime startOfPeriod, DateTime endOfPeriod)
@@ -43,5 +45,10 @@ namespace PL.CalfTrainer.Business.Services
 		}
 
 		public event EventHandler<DailyExerciseTrackerChangedArgs> DailyExerciseTrackerChanged;
+	}
+
+	public interface ITimeProvider
+	{
+		DateTime Today { get; set; }
 	}
 }
