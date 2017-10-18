@@ -29,14 +29,16 @@ namespace PL.CalfTrainer.Business.Services
 
 		public DailyExerciseTracker GetExecutionsOfDay(DateTime day)
 		{
-			var executions = mDataService.GetByPeriod(DateTime.Today, DateTime.Today.AddDays(1).AddTicks(-1));
+			var executions = mDataService.GetByPeriod(day, day.AddDays(1).AddTicks(-1));
 
-			return new DailyExerciseTracker(mTimeProvider.Today, executions);
+			return new DailyExerciseTracker(day.Date, executions);
 		}
 
 		public IList<DailyExerciseTracker> GetExecutionsOfPeriod(DateTime startOfPeriod, DateTime endOfPeriod)
 		{
-			throw new NotImplementedException();
+			var executions = mDataService.GetByPeriod(startOfPeriod, endOfPeriod);
+
+			return new List<DailyExerciseTracker>();
 		}
 
 		private void SignalDailyExerciseTrackerChanged(DailyExerciseTracker dailyExerciseTracker)
