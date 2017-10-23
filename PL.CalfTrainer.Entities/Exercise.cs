@@ -68,17 +68,17 @@ namespace PL.CalfTrainer.Entities
 
 		#region Current counters
 
-		public int LongLeftCount { get; internal set; }
-		public int ShortLeftCount { get; internal set; }
-		public int LongRightCount { get; internal set; }
-		public int ShortRightCount { get; internal set; }
+		public int LongLeftCount { get; set; }
+		public int ShortLeftCount { get; set; }
+		public int LongRightCount { get; set; }
+		public int ShortRightCount { get; set; }
 
-		public int RemainingPreparationTime { get; internal set; }
-		public int RemainingSubExerciseTime { get; internal set; }
+		public int RemainingPreparationTime { get; set; }
+		public int RemainingSubExerciseTime { get; set; }
 
 		#endregion Current counters
 
-		public SubExercise CurrentSubExercise { get; internal set; }
+		public SubExercise CurrentSubExercise { get; set; }
 
 		#region Remaining total time
 
@@ -142,5 +142,7 @@ namespace PL.CalfTrainer.Entities
 				return (totalNoOfSubExercises - remainingNoOfSubExercises) / totalNoOfSubExercises * 100;
 			}
 		}
+
+		public bool IsDone => PercentageCompleted == 100;
 	}
 }

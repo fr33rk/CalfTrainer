@@ -125,11 +125,16 @@ namespace PL.CalfTrainer.Business.Tests
 		}
 
 		[Test]
-		[TestCase(1, "LongLeftCount=8;LongRightCount=8;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=0")]
-		[TestCase(2, "LongLeftCount=8;LongRightCount=8;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=2;RemainingSubExerciseTime=8;CurrentSubExercise=0")]
-		[TestCase(5, "LongLeftCount=8;LongRightCount=8;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=0;RemainingSubExerciseTime=7;CurrentSubExercise=0")]
-		[TestCase(13, "LongLeftCount=7;LongRightCount=8;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=1")]
-		public void ExerciseService_TimerTick_ExerciseChangedCorrect(int elapsedTicks, string expectedExerciseState)
+		[TestCase(1, "Start", "LongLeftCount=8;LongRightCount=8;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=1")]
+		[TestCase(2, "1st second", "LongLeftCount=8;LongRightCount=8;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=2;RemainingSubExerciseTime=8;CurrentSubExercise=1")]
+		[TestCase(5, "Preparation finished", "LongLeftCount=8;LongRightCount=8;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=0;RemainingSubExerciseTime=7;CurrentSubExercise=1")]
+		[TestCase(13, "Next sub exercise", "LongLeftCount=7;LongRightCount=8;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=3")]
+		[TestCase(25, "3d sub exercise", "LongLeftCount=7;LongRightCount=7;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=1")]
+		[TestCase(193, "1st short sub exercise", "LongLeftCount=0;LongRightCount=0;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=2")]
+		[TestCase(205, "2st short sub exercise", "LongLeftCount=0;LongRightCount=0;ShortLeftCount=7;ShortRightCount=8;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=4")]
+		[TestCase(217, "2nd time 1st short sub exercise", "LongLeftCount=0;LongRightCount=0;ShortLeftCount=7;ShortRightCount=7;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=2")]
+		[TestCase(385, "Done", "LongLeftCount=0;LongRightCount=0;ShortLeftCount=0;ShortRightCount=0;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=0")]
+		public void ExerciseService_TimerTick_ExerciseChangedCorrect(int elapsedTicks, string testCaseDescription, string expectedExerciseState)
 		{
 			// Arrange
 			var stubTimerService = Substitute.For<ITimerService>();
@@ -140,13 +145,19 @@ namespace PL.CalfTrainer.Business.Tests
 			unitUnderTest.Start();
 
 			// Act
-			for (int i = 0; i < elapsedTicks; i++)
+			for (var i = 0; i < elapsedTicks; i++)
 			{
 				stubTimerService.Elapsed += Raise.Event();
 			}
 
 			// Assert
-			Assert.AreEqual(expectedExerciseState, actualExercise.ToString());
+			Assert.AreEqual(expectedExerciseState, actualExercise.ToString(), $"TestCase {testCaseDescription} failed");
+		}
+
+
+		public void ExerciseService_TimerTick_SignalsActiveSubExerciseChanged()
+		{
+			
 		}
 	}
 }
