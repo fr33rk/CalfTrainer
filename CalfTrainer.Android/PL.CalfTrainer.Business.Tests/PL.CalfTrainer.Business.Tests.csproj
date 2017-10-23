@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="ExerciseServiceTests.cs" />
     <Compile Include="ExerciseTests.cs" />
+    <Compile Include="ExerciseTrackerServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimerServiceTests.cs" />
   </ItemGroup>
