@@ -269,3 +269,4 @@ __pycache__/
 /Documentation/*.lck
 /Documentation/*.bak_*
 /CalfTrainer.Android/*.bak
+.vs
