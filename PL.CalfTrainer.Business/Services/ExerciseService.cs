@@ -24,7 +24,7 @@ namespace PL.CalfTrainer.Business.Services
 		{
 			try
 			{
-				return new ExerciseService(new Exercise(configuration), configuration, timerService );
+				return new ExerciseService(new Exercise(configuration), configuration, timerService);
 			}
 			catch (Exception e)
 			{
@@ -70,10 +70,34 @@ namespace PL.CalfTrainer.Business.Services
 		private void TimerServiceElapsed(object sender, EventArgs args)
 		{
 			// Handle next tick
-			// Inform whoever is interested.
-			SignalExerciseChanged();
-		}
+			if (!mExercise.IsDone)
+			{
+				if (mExercise.CurrentSubExercise == SubExercise.Undefined)
+				{
+					TryStartNextSubExercise();
+					return;
+				}
 
+				if (mExercise.RemainingPreparationTime > 0)
+				{
+					mExercise.RemainingPreparationTime--;
+				}
+				else if (mExercise.RemainingSubExerciseTime > 0)
+				{
+					mExercise.RemainingSubExerciseTime--;
+				}
+				else
+				{
+					if (!TryStartNextSubExercise())
+					{
+						//SignalIsDone();
+					}
+				}
+
+				// Inform whoever is interested.
+				SignalExerciseChanged();
+			}
+		}
 
 		#region Event ExersizeChanged
 
@@ -86,5 +110,53 @@ namespace PL.CalfTrainer.Business.Services
 
 		#endregion Event ExersizeChanged
 
+		#region event ActiveSubExerciseChanged
+
+		private void SignalActiveSubExerciseChanged(SubExercise fromSubExercise, SubExercise toSubExercise)
+		{
+			ActiveSubExerciseChanged?.Invoke(this, new ActiveSubExerciseChangedEventArgs(fromSubExercise, toSubExercise));
+		}
+
+		public event EventHandler<ActiveSubExerciseChangedEventArgs> ActiveSubExerciseChanged;
+
+		#endregion event ActiveSubExerciseChanged
+
+		private bool TryStartNextSubExercise()
+		{
+			switch (mExercise.CurrentSubExercise)
+			{
+				case SubExercise.Undefined:
+					mExercise.CurrentSubExercise = SubExercise.LongLeft;
+					break;
+				case SubExercise.LongLeft:
+					mExercise.LongLeftCount--;
+					mExercise.CurrentSubExercise = SubExercise.LongRight;
+					break;
+				case SubExercise.LongRight:
+					mExercise.LongRightCount--;
+					mExercise.CurrentSubExercise = mExercise.LongLeftCount > 0
+						? SubExercise.LongLeft
+						: SubExercise.ShortLeft;
+					break;
+				case SubExercise.ShortLeft:
+					mExercise.ShortLeftCount--;
+					mExercise.CurrentSubExercise = SubExercise.ShortRight;
+					break;
+				case SubExercise.ShortRight:
+					mExercise.ShortRightCount--;
+					mExercise.CurrentSubExercise = mExercise.ShortLeftCount > 0
+						? SubExercise.ShortLeft
+						: SubExercise.Undefined;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
+			mExercise.RemainingPreparationTime = mExerciseConfiguration.PreparationDuration;
+			mExercise.RemainingSubExerciseTime = mExerciseConfiguration.DurationPerStance;
+			SignalExerciseChanged();
+
+			return mExercise.CurrentSubExercise != SubExercise.Undefined;
+		}
 	}
 }
