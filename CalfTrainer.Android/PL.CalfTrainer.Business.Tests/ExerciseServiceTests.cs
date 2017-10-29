@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using NSubstitute;
 using NUnit.Framework;
 using PL.CalfTrainer.Business.Services;
@@ -10,7 +11,7 @@ namespace PL.CalfTrainer.Business.Tests
 	[TestFixture]
 	public class ExerciseServiceTests
 	{
-		private ExerciseConfiguration CreateTestExerciseConfiguration()
+		private static ExerciseConfiguration CreateTestExerciseConfiguration()
 		{
 			return new ExerciseConfiguration
 			{
@@ -51,6 +52,39 @@ namespace PL.CalfTrainer.Business.Tests
 			// TODO: Move this to a sepparate test
 			Assert.IsTrue(eventThrown, "Expected exercise changed event thrown");
 			Assert.AreEqual(expectedExercise.ToString(), actualExercise.ToString());
+		}
+
+		[Test]
+		public void ExerciseService_PrepareExerciseServiceFromInvalidString_CreatedDefault()
+		{
+			// Arrange
+			var exerciseConfiguration = CreateTestExerciseConfiguration();
+			var stubExerciseTimer = Substitute.For<ITimerService>();
+			var invalidString = "Invalid string";
+			var expectedResult = new Exercise(exerciseConfiguration).ToString();
+
+			// Act
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(invalidString, exerciseConfiguration, stubExerciseTimer);
+			var actualResult = unitUnderTest.StateToString();
+
+			// Assert
+			Assert.AreEqual(expectedResult, actualResult);
+		}
+
+		[Test]
+		public void ExerciseService_StateToString_ReturnsExerciseToString()
+		{
+			// Arrange
+			var exerciseConfiguration = CreateTestExerciseConfiguration();
+			var stubExerciseTImer = Substitute.For<ITimerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubExerciseTImer);
+			var expectedResult = new Exercise(exerciseConfiguration).ToString();
+
+			// Act
+			var actualResult = unitUnderTest.StateToString();
+
+			// Assert
+			Assert.AreEqual(expectedResult, actualResult);
 		}
 
 		[Test]
@@ -107,6 +141,39 @@ namespace PL.CalfTrainer.Business.Tests
 		}
 
 		[Test]
+		public void ExerciseService_Pause_PausesTimer()
+		{
+			// Arrange
+			var exerciseConfiguration = CreateTestExerciseConfiguration();
+			var mockTimerService = Substitute.For<ITimerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService);
+			unitUnderTest.Start();
+
+			// Act
+			unitUnderTest.Pause();
+
+			// Assert
+			mockTimerService.Received(1).Pause();
+		}
+
+		[Test]
+		public void ExerciseService_Resume_ResumesTimer()
+		{
+			// Arrange
+			var exerciseConfiguration = CreateTestExerciseConfiguration();
+			var mockTimerService = Substitute.For<ITimerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService);
+			unitUnderTest.Start();
+			unitUnderTest.Pause();
+
+			// Act
+			unitUnderTest.Resume();
+
+			// Assert
+			mockTimerService.Received(1).Resume();
+		}
+
+		[Test]
 		public void ExerciseService_TimerTick_SignalExerciseChanged()
 		{
 			// Arrange
@@ -154,10 +221,95 @@ namespace PL.CalfTrainer.Business.Tests
 			Assert.AreEqual(expectedExerciseState, actualExercise.ToString(), $"TestCase {testCaseDescription} failed");
 		}
 
-
-		public void ExerciseService_TimerTick_SignalsActiveSubExerciseChanged()
+		[Test]
+		public void ExerciseService_Stop_SignalsActiveSubExerciseChnaged()
 		{
-			
+			// Arrange
+			var actualOldSubExercise = SubExercise.Undefined;
+			var actualNewSubExercise = SubExercise.Undefined;
+			var stubTimerService = Substitute.For<ITimerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
+
+			unitUnderTest.Start();
+
+			for (var i = 0; i < 193; i++)
+			{
+				stubTimerService.Elapsed += Raise.Event();
+			}
+
+			unitUnderTest.ActiveSubExerciseChanged += (sender, args) =>
+			{
+				actualOldSubExercise = args.OldSubExercise;
+				actualNewSubExercise = args.NewSubExercise;
+			};
+
+			// Act
+			unitUnderTest.Stop();
+
+			// Assert
+			Assert.AreEqual(SubExercise.ShortLeft, actualOldSubExercise);
+			Assert.AreEqual(SubExercise.Undefined, actualNewSubExercise);
+		}
+
+		[Test]
+		[TestCase(1, SubExercise.Undefined, SubExercise.LongLeft)]
+		[TestCase(13, SubExercise.LongLeft, SubExercise.LongRight)]
+		[TestCase(25, SubExercise.LongRight, SubExercise.LongLeft)]
+		[TestCase(193, SubExercise.LongRight, SubExercise.ShortLeft)]
+		[TestCase(385, SubExercise.ShortRight, SubExercise.Undefined)]
+		public void ExerciseService_TimerTick_SignalsActiveSubExerciseChanged(int elapsedTicks, SubExercise expectedOldSubExercise, SubExercise expectedNewSubExercise)
+		{
+			// Arrange
+			var actualOldSubExercise = SubExercise.Undefined;
+			var actualNewSubExercise = SubExercise.Undefined;
+			var stubTimerService = Substitute.For<ITimerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
+
+			unitUnderTest.Start();
+
+			for (var i = 0; i < elapsedTicks - 1; i++)
+			{
+				stubTimerService.Elapsed += Raise.Event();
+			}
+
+			unitUnderTest.ActiveSubExerciseChanged += (sender, args) =>
+			{
+				actualOldSubExercise = args.OldSubExercise;
+				actualNewSubExercise = args.NewSubExercise;
+			};
+
+			// Act
+			stubTimerService.Elapsed += Raise.Event();
+
+			// Assert
+			Assert.AreEqual(expectedOldSubExercise, actualOldSubExercise);
+			Assert.AreEqual(expectedNewSubExercise, actualNewSubExercise);
+		}
+
+		[Test]
+		public void ExerciseService_IsRunning_ReturnsTrueWhenRunning()
+		{
+			// Arrange
+			var exerciseConfiguration = CreateTestExerciseConfiguration();
+			var stubTimerService = Substitute.For<ITimerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubTimerService);
+			stubTimerService.IsRunning.Returns(true);
+
+			// Act and assert
+			Assert.IsTrue(unitUnderTest.IsRunning);
+		}
+
+		[Test]
+		public void ExerciseService_IsRunning_ReturnsFalseWhenNotRunning()
+		{
+			// Arrange
+			var exerciseConfiguration = CreateTestExerciseConfiguration();
+			var stubTimerService = Substitute.For<ITimerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubTimerService);
+			stubTimerService.IsRunning.Returns(false);
+
+			// Act and assert
+			Assert.IsFalse(unitUnderTest.IsRunning);
 		}
 	}
 }

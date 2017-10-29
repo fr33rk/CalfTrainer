@@ -22,14 +22,9 @@ namespace PL.CalfTrainer.Business.Services
 
 		public static ExerciseService ExerciseServiceFromString(string stateAsString, ExerciseConfiguration configuration, ITimerService timerService)
 		{
-			try
-			{
-				return new ExerciseService(new Exercise(configuration), configuration, timerService);
-			}
-			catch (Exception e)
-			{
-				throw;
-			}
+			return string.IsNullOrEmpty(stateAsString)
+				? new ExerciseService(new Exercise(configuration), configuration, timerService)
+				: new ExerciseService(Exercise.ExerciseFromString(stateAsString, configuration), configuration, timerService);
 		}
 
 		public string StateToString()
@@ -61,8 +56,9 @@ namespace PL.CalfTrainer.Business.Services
 		public void Stop()
 		{
 			mTimerService.Stop();
+			SignalActiveSubExerciseChanged(mExercise.CurrentSubExercise, SubExercise.Undefined);
 			mExercise.Reset();
-			// Inform
+			SignalExerciseChanged();
 		}
 
 		public bool IsRunning => mTimerService.IsRunning;
@@ -123,35 +119,41 @@ namespace PL.CalfTrainer.Business.Services
 
 		private bool TryStartNextSubExercise()
 		{
+			var newSubExercise = SubExercise.Undefined;
+
 			switch (mExercise.CurrentSubExercise)
 			{
 				case SubExercise.Undefined:
-					mExercise.CurrentSubExercise = SubExercise.LongLeft;
+					newSubExercise = SubExercise.LongLeft;
 					break;
+
 				case SubExercise.LongLeft:
 					mExercise.LongLeftCount--;
-					mExercise.CurrentSubExercise = SubExercise.LongRight;
+					newSubExercise = SubExercise.LongRight;
 					break;
+
 				case SubExercise.LongRight:
 					mExercise.LongRightCount--;
-					mExercise.CurrentSubExercise = mExercise.LongLeftCount > 0
+					newSubExercise = mExercise.LongLeftCount > 0
 						? SubExercise.LongLeft
 						: SubExercise.ShortLeft;
 					break;
+
 				case SubExercise.ShortLeft:
 					mExercise.ShortLeftCount--;
-					mExercise.CurrentSubExercise = SubExercise.ShortRight;
+					newSubExercise = SubExercise.ShortRight;
 					break;
+
 				case SubExercise.ShortRight:
 					mExercise.ShortRightCount--;
-					mExercise.CurrentSubExercise = mExercise.ShortLeftCount > 0
+					newSubExercise = mExercise.ShortLeftCount > 0
 						? SubExercise.ShortLeft
 						: SubExercise.Undefined;
 					break;
-				default:
-					throw new ArgumentOutOfRangeException();
 			}
 
+			SignalActiveSubExerciseChanged(mExercise.CurrentSubExercise, newSubExercise);
+			mExercise.CurrentSubExercise = newSubExercise;
 			mExercise.RemainingPreparationTime = mExerciseConfiguration.PreparationDuration;
 			mExercise.RemainingSubExerciseTime = mExerciseConfiguration.DurationPerStance;
 			SignalExerciseChanged();
