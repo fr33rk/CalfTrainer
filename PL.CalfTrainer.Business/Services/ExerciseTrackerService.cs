@@ -1,18 +1,17 @@
 ﻿// <copyright file="ExerciseTrackerService.cs" company="Delta Instruments">Copyright © Delta Instruments B.V.</copyright>
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using PL.CalfTrainer.Entities;
 using PL.CalfTrainer.Infrastructure.EventArgs;
 using PL.CalfTrainer.Infrastructure.Services;
 
 namespace PL.CalfTrainer.Business.Services
 {
-
-
 	public class ExerciseTrackerService : IExerciseTrackerService
 	{
-		private IExerciseTrackerDataService mDataService;
-		private ITimeProvider mTimeProvider;
+		private readonly IExerciseTrackerDataService mDataService;
+		private readonly ITimeProvider mTimeProvider;
 
 		public ExerciseTrackerService(IExerciseTrackerDataService dataService, ITimeProvider timeProvider)
 		{
@@ -36,9 +35,11 @@ namespace PL.CalfTrainer.Business.Services
 
 		public IList<DailyExerciseTracker> GetExecutionsOfPeriod(DateTime startOfPeriod, DateTime endOfPeriod)
 		{
-			var executions = mDataService.GetByPeriod(startOfPeriod, endOfPeriod);
+			var executions = mDataService.GetByPeriod(startOfPeriod, endOfPeriod)
+				.GroupBy(e => e.ExecutionTime.Date)
+				.Select(g => new DailyExerciseTracker(g.Key.Date, g.ToList()));
 
-			return new List<DailyExerciseTracker>();
+			return executions.ToList();
 		}
 
 		private void SignalDailyExerciseTrackerChanged(DailyExerciseTracker dailyExerciseTracker)
@@ -47,10 +48,5 @@ namespace PL.CalfTrainer.Business.Services
 		}
 
 		public event EventHandler<DailyExerciseTrackerChangedArgs> DailyExerciseTrackerChanged;
-	}
-
-	public interface ITimeProvider
-	{
-		DateTime Today { get; set; }
 	}
 }

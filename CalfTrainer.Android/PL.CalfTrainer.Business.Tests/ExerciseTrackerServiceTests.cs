@@ -102,21 +102,21 @@ namespace PL.CalfTrainer.Business.Tests
 		    var stubTimeProvider = Substitute.For<ITimeProvider>();
 		    var unitUnderTest = new ExerciseTrackerService(stubDataService, stubTimeProvider);
 			var expectedPeriodStart = new DateTime(2017, 10, 19);
-		    var expectedPeriodEnd = new DateTime(2017, 10, 20);
+		    var expectedPeriodEnd = new DateTime(2017, 10, 20, 12, 00, 00);
 
 			stubDataService.GetByPeriod(Arg.Any<DateTime>(), Arg.Any<DateTime>())
 			    .Returns(x => testDataSet
 				    .Where(ee => ee.ExecutionTime >= (DateTime)x[0] && ee.ExecutionTime <= (DateTime)x[1])
 				    .ToList());
 
-
 		    // Act
 		    var actualResult = unitUnderTest.GetExecutionsOfPeriod(expectedPeriodStart, expectedPeriodEnd);
 
 		    // Assert
 		    Assert.AreEqual(2, actualResult.Count, "Expected to get the data of 2 days");
-
-	    }
+			Assert.AreEqual(3, actualResult[0].ExersiseExecutions.Count, "Expected 3 exercises on 19-10");
+		    Assert.AreEqual(2, actualResult[1].ExersiseExecutions.Count, "Expected 2 exercises on 20-10 until 12:00");
+		}
 
 		private static IList<ExersiseExecution> CreateTestDataSet()
 	    {
