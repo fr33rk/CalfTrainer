@@ -112,7 +112,73 @@ namespace PL.CalfTrainer.Business.Tests
 
 			// Assert
 			Assert.AreEqual(expectedRemainingTime, unitUnderTest.RemainingTotalTime);
+		}
 
+		[Test]
+		public void Exercise_Started_PercentageCompletedIsZero()
+		{
+			// Arrange
+			var stubConfiguration = new ExerciseConfiguration()
+			{
+				NoOfRepetitions = 8,
+				DurationPerStance = 8,
+				PreparationDuration = 3
+			};
+			var expectedPercentage = 0;
+
+			var unitUnderTest = new Exercise(stubConfiguration);
+
+			// Assert
+			Assert.AreEqual(expectedPercentage, unitUnderTest.PercentageCompleted);
+		}
+
+		[Test]
+		public void Exercise_HalfWay_PercentageCompletedIsFifty()
+		{
+			// Arrange
+			var stubConfiguration = new ExerciseConfiguration()
+			{
+				NoOfRepetitions = 8,
+				DurationPerStance = 8,
+				PreparationDuration = 3
+			};
+			var expectedPercentage = 50;
+
+			var unitUnderTest = new Exercise(stubConfiguration)
+			{
+				LongLeftCount = 0,
+				LongRightCount = 0
+			};
+
+			// Assert
+			Assert.AreEqual(expectedPercentage, unitUnderTest.PercentageCompleted);
+		}
+
+		[Test]
+		public void Exercise_Done_PercentageCompletedIsHundred()
+		{
+			// Arrange
+			var stubConfiguration = new ExerciseConfiguration()
+			{
+				NoOfRepetitions = 8,
+				DurationPerStance = 8,
+				PreparationDuration = 3
+			};
+
+			const int expectedPercentage = 100;
+
+			var unitUnderTest = new Exercise(stubConfiguration)
+			{
+				LongLeftCount = 0,
+				LongRightCount = 0,
+				ShortLeftCount = 0,
+				ShortRightCount = 0,
+				RemainingPreparationTime = 0,
+				RemainingSubExerciseTime = 0
+			};
+
+			// Assert
+			Assert.AreEqual(expectedPercentage, unitUnderTest.PercentageCompleted);
 		}
 	}
 }

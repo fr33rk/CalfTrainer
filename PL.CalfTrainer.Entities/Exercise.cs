@@ -139,7 +139,7 @@ namespace PL.CalfTrainer.Entities
 			{
 				var totalNoOfSubExercises = mConfiguration.NoOfRepetitions * 4;
 				var remainingNoOfSubExercises = LongLeftCount + LongRightCount + ShortLeftCount + ShortRightCount;
-				return (totalNoOfSubExercises - remainingNoOfSubExercises) / totalNoOfSubExercises * 100;
+				return Convert.ToInt32(((double)totalNoOfSubExercises - remainingNoOfSubExercises) / totalNoOfSubExercises * 100);
 			}
 		}
 
