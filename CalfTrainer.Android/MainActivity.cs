@@ -4,14 +4,17 @@ using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
 using Android.Widget;
-using CalfTrainer.Android.BusinessLogic;
+using PL.CalfTrainer.Business.Services;
+using PL.CalfTrainer.Entities;
+using PL.CalfTrainer.Infrastructure.EventArgs;
+using PL.CalfTrainer.Infrastructure.Services;
 
 namespace CalfTrainer.Android
 {
 	[Activity(Label = "CalfTrainer", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
 	public class MainActivity : Activity
 	{
-		private ExerciseService mExerciseService;
+		private IExerciseService mExerciseService;
 
 		private TextView mMainCounter;
 		private TextView mCounterLeftLongCalf;
@@ -22,42 +25,55 @@ namespace CalfTrainer.Android
 		private Button mStartPauseButton;
 		private Button mStopButton;
 
+		private const string SavedExerciseStateKey = "SavedExerciseStateKey";
+		private const string SavedExerciseConfigurationKey = "SavedExerciseConfigurationKey";
+
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
 			base.OnCreate(savedInstanceState);
 
 			// Set our view from the "main" layout resource
 			SetContentView(Resource.Layout.Main);
+			CreateExerciseService(savedInstanceState);
+			AttachControlsToMemberVariables();
+			AttachControlEventHandler();
+
+			mExerciseService.SendExerciseState();
+		}
+
+		public override void OnSaveInstanceState(Bundle outState, PersistableBundle outPersistentState)
+		{
+			outState.PutString(SavedExerciseStateKey, mExerciseService.StateToString());
+			base.OnSaveInstanceState(outState, outPersistentState);
+		}
+
+		private void CreateExerciseService(BaseBundle savedInstance)
+		{
+			var exerciseState = savedInstance?.GetString(SavedExerciseStateKey, string.Empty);
 
 			// Create the exercise service
-			mExerciseService = new ExerciseService();
+			mExerciseService = ExerciseService.ExerciseServiceFromString(exerciseState, new ExerciseConfiguration(), new TimerService());
+
 			mExerciseService.ExerciseChanged += ExerciseServiceOnExerciseChanged;
 			mExerciseService.ActiveSubExerciseChanged += ExerciseServiceOnActiveSubExerciseChanged;
-			mExerciseService.ExerciseIsDone += ExerciseServiceOnExerciseIsDone;
+		}
 
-			// Get the controls
+		private void AttachControlsToMemberVariables()
+		{
 			mMainCounter = FindViewById<TextView>(Resource.Id.textViewMainCounter);
 			mCounterLeftLongCalf = FindViewById<TextView>(Resource.Id.textViewCounterLeftLongCalf);
 			mCounterRightLongCalf = FindViewById<TextView>(Resource.Id.textViewCounterRightLongCalf);
 			mCounterLeftShortCalf = FindViewById<TextView>(Resource.Id.textViewCounterLeftShortCalf);
 			mCounterRightShortCalf = FindViewById<TextView>(Resource.Id.textViewCounterRightShortCalf);
 			mTotalTimeRemaining = FindViewById<TextView>(Resource.Id.textViewTotalTimeRemaining);
-
 			mStartPauseButton = FindViewById<Button>(Resource.Id.buttonStart);
-			mStartPauseButton.Click += StartPauseButtonOnClick;
-
 			mStopButton = FindViewById<Button>(Resource.Id.buttonStop);
-			mStopButton.Click += StopButtonOnClick;
-
-			mExerciseService.Prepare();
 		}
 
-
-
-		private void ExerciseServiceOnExerciseIsDone(object sender, EventArgs eventArgs)
+		private void AttachControlEventHandler()
 		{
-			mStartPauseButton.Text = Resources.GetString(Resource.String.start);
-			mStopButton.Enabled = false;
+			mStartPauseButton.Click += StartPauseButtonOnClick;
+			mStopButton.Click += StopButtonOnClick;
 		}
 
 		private void StartPauseButtonOnClick(object sender, EventArgs eventArgs)
@@ -69,7 +85,7 @@ namespace CalfTrainer.Android
 			}
 			else
 			{
-				mExerciseService.Start();
+				mExerciseService.Resume();
 				mStartPauseButton.Text = Resources.GetString(Resource.String.pause);
 			}
 
@@ -122,6 +138,12 @@ namespace CalfTrainer.Android
 			RunOnUiThread(() =>
 			{
 				var exercise = exerciseChangedEventArgs.Exercise;
+
+				if (exercise.IsDone)
+				{
+					mStartPauseButton.Text = Resources.GetString(Resource.String.start);
+					mStopButton.Enabled = false;
+				}
 
 				if (exercise.RemainingPreparationTime > 0)
 				{

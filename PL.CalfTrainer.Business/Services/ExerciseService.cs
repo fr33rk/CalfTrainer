@@ -5,7 +5,7 @@ using PL.CalfTrainer.Infrastructure.Services;
 
 namespace PL.CalfTrainer.Business.Services
 {
-	public class ExerciseService
+	public class ExerciseService : IExerciseService
 	{
 		private Exercise mExercise;
 		private ExerciseConfiguration mExerciseConfiguration;
@@ -58,6 +58,11 @@ namespace PL.CalfTrainer.Business.Services
 			mTimerService.Stop();
 			SignalActiveSubExerciseChanged(mExercise.CurrentSubExercise, SubExercise.Undefined);
 			mExercise.Reset();
+			SignalExerciseChanged();
+		}
+
+		public void SendExerciseState()
+		{
 			SignalExerciseChanged();
 		}
 
