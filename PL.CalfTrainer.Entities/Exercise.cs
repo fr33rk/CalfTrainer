@@ -10,9 +10,9 @@ namespace PL.CalfTrainer.Entities
 		#region Definitions
 
 		private readonly ExerciseConfiguration mConfiguration;
-		private bool mIsDone;
 		private const char KEY_VALUE_SEPARATOR = '=';
 		private const string KEY_VALUE_PAIR_SEPARATOR = ";";
+		private TimeSpan mTotalTime;
 
 		#endregion Definitions
 
@@ -21,8 +21,16 @@ namespace PL.CalfTrainer.Entities
 		public Exercise(ExerciseConfiguration configuration)
 		{
 			mConfiguration = configuration;
-
+			CalculateTotalTime();
 			Reset();
+		}
+
+		private void CalculateTotalTime()
+		{
+			mTotalTime = TimeSpan.FromSeconds(
+				(mConfiguration.DurationPerStance + mConfiguration.PreparationDuration + 1) // + 1 for switching
+				* (mConfiguration.NoOfRepetitions * 4) // -1 because the time of the last one depends on the remaining time.
+				+ 1); // First tick is used to start.
 		}
 
 		public static Exercise ExerciseFromConfiguration(ExerciseConfiguration configuration)
@@ -47,7 +55,7 @@ namespace PL.CalfTrainer.Entities
 					CurrentSubExercise = (SubExercise)keyValuePairFromString[nameof(CurrentSubExercise)]
 				};
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				return ExerciseFromConfiguration(configurationUsedForReset);
 			}
@@ -133,15 +141,7 @@ namespace PL.CalfTrainer.Entities
 
 		#endregion To and from String
 
-		public virtual int PercentageCompleted
-		{
-			get
-			{
-				var totalNoOfSubExercises = mConfiguration.NoOfRepetitions * 4;
-				var remainingNoOfSubExercises = LongLeftCount + LongRightCount + ShortLeftCount + ShortRightCount;
-				return Convert.ToInt32(((double)totalNoOfSubExercises - remainingNoOfSubExercises) / totalNoOfSubExercises * 100);
-			}
-		}
+		public virtual int PercentageCompleted => 100 - Convert.ToInt32((double) RemainingTotalTime.TotalSeconds / mTotalTime.TotalSeconds * 100);
 
 		public bool IsDone => PercentageCompleted == 100;
 	}

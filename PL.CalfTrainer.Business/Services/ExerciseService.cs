@@ -1,5 +1,6 @@
 ﻿using System;
 using PL.CalfTrainer.Entities;
+using PL.CalfTrainer.Infrastructure.Enums;
 using PL.CalfTrainer.Infrastructure.EventArgs;
 using PL.CalfTrainer.Infrastructure.Services;
 
@@ -11,6 +12,7 @@ namespace PL.CalfTrainer.Business.Services
 		private ExerciseConfiguration mExerciseConfiguration;
 		private ITimerService mTimerService;
 		private const int TIMER_INTERVAL_MS = 1000;
+		private ExerciseServiceState mCurrentState = ExerciseServiceState.Stopped;
 
 		protected ExerciseService(Exercise exercise, ExerciseConfiguration configuration, ITimerService timerService)
 		{
@@ -38,19 +40,24 @@ namespace PL.CalfTrainer.Business.Services
 			SignalExerciseChanged();
 		}
 
-		public void Start()
+		public void Run()
 		{
-			mTimerService.Start(TIMER_INTERVAL_MS);
+			if (mCurrentState == ExerciseServiceState.Stopped)
+			{
+				mTimerService.Start(TIMER_INTERVAL_MS);
+			}
+			else if (mCurrentState == ExerciseServiceState.Paused)
+			{
+				mTimerService.Resume();
+			}
+
+			ChangeState(ExerciseServiceState.Started);
 		}
 
 		public void Pause()
 		{
 			mTimerService.Pause();
-		}
-
-		public void Resume()
-		{
-			mTimerService.Resume();
+			ChangeState(ExerciseServiceState.Paused);
 		}
 
 		public void Stop()
@@ -59,6 +66,7 @@ namespace PL.CalfTrainer.Business.Services
 			SignalActiveSubExerciseChanged(mExercise.CurrentSubExercise, SubExercise.Undefined);
 			mExercise.Reset();
 			SignalExerciseChanged();
+			ChangeState(ExerciseServiceState.Stopped);
 		}
 
 		public void SendExerciseState()
@@ -164,6 +172,19 @@ namespace PL.CalfTrainer.Business.Services
 			SignalExerciseChanged();
 
 			return mExercise.CurrentSubExercise != SubExercise.Undefined;
+		}
+
+		private void ChangeState(ExerciseServiceState newState)
+		{
+			mCurrentState = newState;
+			SignalStateChanged(newState);
+		}
+
+		public event EventHandler<ExerciseServiceStateChangedArgs> StateChanged;
+
+		private void SignalStateChanged(ExerciseServiceState newState)
+		{
+			StateChanged?.Invoke(this, new ExerciseServiceStateChangedArgs(newState));
 		}
 	}
 }

@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Widget;
 using PL.CalfTrainer.Business.Services;
 using PL.CalfTrainer.Entities;
+using PL.CalfTrainer.Infrastructure.Enums;
 using PL.CalfTrainer.Infrastructure.EventArgs;
 using PL.CalfTrainer.Infrastructure.Services;
 
@@ -57,6 +58,30 @@ namespace CalfTrainer.Android
 
 			mExerciseService.ExerciseChanged += ExerciseServiceOnExerciseChanged;
 			mExerciseService.ActiveSubExerciseChanged += ExerciseServiceOnActiveSubExerciseChanged;
+			mExerciseService.StateChanged += ExerciseServiceOnStateChanged;
+		}
+
+		private void ExerciseServiceOnStateChanged(object sender, ExerciseServiceStateChangedArgs exerciseServiceStateChangedArgs)
+		{
+			RunOnUiThread(() =>
+			{
+				switch (exerciseServiceStateChangedArgs.NewState)
+				{
+					case ExerciseServiceState.Started:
+						mStartPauseButton.Text = Resources.GetString(Resource.String.pause);
+						break;
+
+					case ExerciseServiceState.Paused:
+						mStartPauseButton.Text = Resources.GetString(Resource.String.resume);
+						break;
+
+					case ExerciseServiceState.Stopped:
+						mStartPauseButton.Text = Resources.GetString(Resource.String.start);
+						break;
+				}	
+
+				mStopButton.Enabled = exerciseServiceStateChangedArgs.NewState != ExerciseServiceState.Stopped;
+			});
 		}
 
 		private void AttachControlsToMemberVariables()
@@ -83,15 +108,11 @@ namespace CalfTrainer.Android
 			if (mExerciseService.IsRunning)
 			{
 				mExerciseService.Pause();
-				mStartPauseButton.Text = Resources.GetString(Resource.String.resume);
 			}
 			else
 			{
-				mExerciseService.Start();
-				mStartPauseButton.Text = Resources.GetString(Resource.String.pause);
+				mExerciseService.Run();
 			}
-
-			mStopButton.Enabled = true;
 		}
 
 		private void StopButtonOnClick(object sender, EventArgs eventArgs)

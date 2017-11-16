@@ -134,7 +134,7 @@ namespace PL.CalfTrainer.Business.Tests
 			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService);
 
 			// Act
-			unitUnderTest.Start();
+			unitUnderTest.Run();
 
 			// Assert
 			mockTimerService.Received(1).Start(Arg.Any<int>());
@@ -147,7 +147,7 @@ namespace PL.CalfTrainer.Business.Tests
 			var exerciseConfiguration = CreateTestExerciseConfiguration();
 			var mockTimerService = Substitute.For<ITimerService>();
 			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService);
-			unitUnderTest.Start();
+			unitUnderTest.Run();
 
 			// Act
 			unitUnderTest.Pause();
@@ -163,11 +163,11 @@ namespace PL.CalfTrainer.Business.Tests
 			var exerciseConfiguration = CreateTestExerciseConfiguration();
 			var mockTimerService = Substitute.For<ITimerService>();
 			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService);
-			unitUnderTest.Start();
+			unitUnderTest.Run();
 			unitUnderTest.Pause();
 
 			// Act
-			unitUnderTest.Resume();
+			unitUnderTest.Run();
 
 			// Assert
 			mockTimerService.Received(1).Resume();
@@ -183,7 +183,7 @@ namespace PL.CalfTrainer.Business.Tests
 
 			unitUnderTest.ExerciseChanged += (sender, args) => receivedChangedEvent.Set();
 
-			unitUnderTest.Start();
+			unitUnderTest.Run();
 
 			// Act
 			stubTimerService.Elapsed += Raise.Event();
@@ -209,7 +209,7 @@ namespace PL.CalfTrainer.Business.Tests
 			Exercise actualExercise = null;
 
 			unitUnderTest.ExerciseChanged += (sender, args) => actualExercise = args.Exercise;
-			unitUnderTest.Start();
+			unitUnderTest.Run();
 
 			// Act
 			for (var i = 0; i < elapsedTicks; i++)
@@ -230,7 +230,7 @@ namespace PL.CalfTrainer.Business.Tests
 			var stubTimerService = Substitute.For<ITimerService>();
 			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
 
-			unitUnderTest.Start();
+			unitUnderTest.Run();
 
 			for (var i = 0; i < 193; i++)
 			{
@@ -265,7 +265,7 @@ namespace PL.CalfTrainer.Business.Tests
 			var stubTimerService = Substitute.For<ITimerService>();
 			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
 
-			unitUnderTest.Start();
+			unitUnderTest.Run();
 
 			for (var i = 0; i < elapsedTicks - 1; i++)
 			{

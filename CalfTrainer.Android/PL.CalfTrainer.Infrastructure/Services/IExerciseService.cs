@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using PL.CalfTrainer.Infrastructure.EventArgs;
 
 namespace PL.CalfTrainer.Infrastructure.Services
@@ -9,11 +10,9 @@ namespace PL.CalfTrainer.Infrastructure.Services
 
 		void PrepareForNewExercise();
 
-		void Start();
+		void Run();
 
 		void Pause();
-
-		void Resume();
 
 		void Stop();
 
@@ -24,5 +23,7 @@ namespace PL.CalfTrainer.Infrastructure.Services
 		event EventHandler<ExerciseChangedEventArgs> ExerciseChanged;
 
 		event EventHandler<ActiveSubExerciseChangedEventArgs> ActiveSubExerciseChanged;
+
+		event EventHandler<ExerciseServiceStateChangedArgs> StateChanged;
 	}
 }
