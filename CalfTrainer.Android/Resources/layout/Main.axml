@@ -146,6 +146,12 @@
             p1:textSize="36dp"
             p1:enabled="false" />
     </LinearLayout>
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        p1:layout_width="match_parent"
+        p1:layout_height="wrap_content"
+        p1:id="@+id/totalProgressBar"
+        p1:layout_above="@id/linearViewButtons" />
     <TextView
         p1:text="@string/totalTimeRemaining"
         p1:layout_width="match_parent"
@@ -154,6 +160,6 @@
         p1:textSize="16dp"
         p1:layout_gravity="center_horizontal"
         p1:layout_margin="10dp"
-        p1:layout_above="@id/linearViewButtons"
+        p1:layout_above="@id/totalProgressBar"
         p1:gravity="center_horizontal" />
 </RelativeLayout>

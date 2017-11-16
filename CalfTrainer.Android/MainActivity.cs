@@ -24,6 +24,7 @@ namespace CalfTrainer.Android
 		private TextView mTotalTimeRemaining;
 		private Button mStartPauseButton;
 		private Button mStopButton;
+		private ProgressBar mProgressBar;
 
 		private const string SavedExerciseStateKey = "SavedExerciseStateKey";
 		private const string SavedExerciseConfigurationKey = "SavedExerciseConfigurationKey";
@@ -68,6 +69,7 @@ namespace CalfTrainer.Android
 			mTotalTimeRemaining = FindViewById<TextView>(Resource.Id.textViewTotalTimeRemaining);
 			mStartPauseButton = FindViewById<Button>(Resource.Id.buttonStart);
 			mStopButton = FindViewById<Button>(Resource.Id.buttonStop);
+			mProgressBar = FindViewById<ProgressBar>(Resource.Id.totalProgressBar);
 		}
 
 		private void AttachControlEventHandler()
@@ -85,7 +87,7 @@ namespace CalfTrainer.Android
 			}
 			else
 			{
-				mExerciseService.Resume();
+				mExerciseService.Start();
 				mStartPauseButton.Text = Resources.GetString(Resource.String.pause);
 			}
 
@@ -162,6 +164,7 @@ namespace CalfTrainer.Android
 				mCounterRightShortCalf.Text = exercise.ShortRightCount.ToString();
 				mTotalTimeRemaining.Text = string.Format(Resources.GetString(Resource.String.totalTimeRemaining),
 					exercise.RemainingTotalTime.ToString(@"mm\:ss"));
+				mProgressBar.Progress = exercise.PercentageCompleted;
 			});
 		}
 	}

@@ -105,8 +105,11 @@ namespace CalfTrainer.Android
 			// aapt resource value: 0x7f050008
 			public const int textViewTitleShortCalf = 2131034120;
 			
+			// aapt resource value: 0x7f050010
+			public const int textViewTotalTimeRemaining = 2131034128;
+			
 			// aapt resource value: 0x7f05000f
-			public const int textViewTotalTimeRemaining = 2131034127;
+			public const int totalProgressBar = 2131034127;
 			
 			static Id()
 			{
