@@ -151,7 +151,8 @@
         p1:layout_width="match_parent"
         p1:layout_height="wrap_content"
         p1:id="@+id/totalProgressBar"
-        p1:layout_above="@id/linearViewButtons" />
+        p1:layout_above="@id/linearViewButtons"
+        p1:layout_margin="4dp" />
     <TextView
         p1:text="@string/totalTimeRemaining"
         p1:layout_width="match_parent"
