@@ -99,7 +99,7 @@ namespace PL.CalfTrainer.Business.Services
 				{
 					if (!TryStartNextSubExercise())
 					{
-						//SignalIsDone();
+						Stop();
 					}
 				}
 
