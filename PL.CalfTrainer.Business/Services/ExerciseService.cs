@@ -79,7 +79,8 @@ namespace PL.CalfTrainer.Business.Services
 		private void TimerServiceElapsed(object sender, EventArgs args)
 		{
 			// Handle next tick
-			if (!mExercise.IsDone)
+			//if (!mExercise.IsDone)
+			if(mCurrentState == ExerciseServiceState.Started)
 			{
 				if (mExercise.CurrentSubExercise == SubExercise.Undefined)
 				{

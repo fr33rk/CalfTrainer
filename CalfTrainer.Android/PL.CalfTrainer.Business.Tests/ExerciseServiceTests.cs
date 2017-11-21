@@ -207,15 +207,28 @@ namespace PL.CalfTrainer.Business.Tests
 			var stubTimerService = Substitute.For<ITimerService>();
 			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
 			Exercise actualExercise = null;
+			bool handled = false;
 
-			unitUnderTest.ExerciseChanged += (sender, args) => actualExercise = args.Exercise;
 			unitUnderTest.Run();
 
-			// Act
-			for (var i = 0; i < elapsedTicks; i++)
+			for (var i = 0; i < elapsedTicks -1; i++)
 			{
 				stubTimerService.Elapsed += Raise.Event();
 			}
+
+			unitUnderTest.ExerciseChanged += (sender, args) =>
+			{
+				if (!handled)
+				{
+					actualExercise = args.Exercise;
+					handled = true;
+				}
+				
+			};
+			
+
+			// Act
+			stubTimerService.Elapsed += Raise.Event();
 
 			// Assert
 			Assert.AreEqual(expectedExerciseState, actualExercise.ToString(), $"TestCase {testCaseDescription} failed");
@@ -264,6 +277,7 @@ namespace PL.CalfTrainer.Business.Tests
 			var actualNewSubExercise = SubExercise.Undefined;
 			var stubTimerService = Substitute.For<ITimerService>();
 			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
+			bool handled = false;
 
 			unitUnderTest.Run();
 
@@ -274,8 +288,12 @@ namespace PL.CalfTrainer.Business.Tests
 
 			unitUnderTest.ActiveSubExerciseChanged += (sender, args) =>
 			{
-				actualOldSubExercise = args.OldSubExercise;
-				actualNewSubExercise = args.NewSubExercise;
+				if (!handled)
+				{
+					actualOldSubExercise = args.OldSubExercise;
+					actualNewSubExercise = args.NewSubExercise;
+					handled = true;
+				}
 			};
 
 			// Act

@@ -92,7 +92,7 @@ namespace PL.CalfTrainer.Entities
 
 		public TimeSpan RemainingTotalTime => TimeSpan.FromSeconds(
 			(mConfiguration.DurationPerStance + mConfiguration.PreparationDuration + 1) // + 1 for switching
-			* (LongLeftCount + LongRightCount + ShortLeftCount + ShortRightCount - 1) // -1 because the time of the last one depends on the remaining time.
+			* Math.Max(0, (LongLeftCount + LongRightCount + ShortLeftCount + ShortRightCount -1)) // -1 because the time of the last one depends on the remaining time.
 			+ RemainingPreparationTime + RemainingSubExerciseTime
 			+ 1); // First tick is used to start.
 
