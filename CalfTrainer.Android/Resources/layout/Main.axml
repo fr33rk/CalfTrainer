@@ -5,14 +5,22 @@
     p1:id="@+id/mainLayout"
     p1:keepScreenOn="true">
     <TextView
+        p1:text="{0}e oefening vandaag"
+        p1:layout_width="match_parent"
+        p1:layout_height="wrap_content"
+        p1:id="@+id/textViewExerciseCountToday"
+        p1:layout_alignParentTop="true"
+        p1:gravity="center"
+        p1:textSize="24dp" />
+    <TextView
         p1:text="8"
         p1:layout_width="match_parent"
         p1:layout_height="wrap_content"
         p1:id="@+id/textViewMainCounter"
-        p1:textSize="128dp"
+        p1:textSize="116dp"
         p1:layout_gravity="center_horizontal"
         p1:gravity="center_horizontal"
-        p1:layout_alignParentTop="true" />
+        p1:layout_below="@+id/textViewExerciseCountToday" />
     <TextView
         p1:text="@string/longCalfs"
         p1:layout_width="match_parent"
