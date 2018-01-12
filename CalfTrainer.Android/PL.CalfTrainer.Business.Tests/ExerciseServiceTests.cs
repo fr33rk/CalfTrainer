@@ -37,8 +37,9 @@ namespace PL.CalfTrainer.Business.Tests
 			var expectedExercise = new Exercise(exerciseConfiguration);
 
 			var stubTimerService = Substitute.For<ITimerService>();
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
 
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubTimerService);
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubTimerService, stubExerciseTrackerService);
 			unitUnderTest.ExerciseChanged += (sender, args) =>
 			{
 				eventThrown = true;
@@ -60,11 +61,12 @@ namespace PL.CalfTrainer.Business.Tests
 			// Arrange
 			var exerciseConfiguration = CreateTestExerciseConfiguration();
 			var stubExerciseTimer = Substitute.For<ITimerService>();
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
 			var invalidString = "Invalid string";
 			var expectedResult = new Exercise(exerciseConfiguration).ToString();
 
 			// Act
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(invalidString, exerciseConfiguration, stubExerciseTimer);
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(invalidString, exerciseConfiguration, stubExerciseTimer, stubExerciseTrackerService);
 			var actualResult = unitUnderTest.StateToString();
 
 			// Assert
@@ -77,7 +79,8 @@ namespace PL.CalfTrainer.Business.Tests
 			// Arrange
 			var exerciseConfiguration = CreateTestExerciseConfiguration();
 			var stubExerciseTImer = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubExerciseTImer);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubExerciseTImer, stubExerciseTrackerService);
 			var expectedResult = new Exercise(exerciseConfiguration).ToString();
 
 			// Act
@@ -92,7 +95,8 @@ namespace PL.CalfTrainer.Business.Tests
 		{
 			// Arrange
 			var stubTimerService = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService, stubExerciseTrackerService);
 			var receivedChangedEvent = new AutoResetEvent(false);
 
 			unitUnderTest.ExerciseChanged += (sender, args) => receivedChangedEvent.Set();
@@ -110,9 +114,10 @@ namespace PL.CalfTrainer.Business.Tests
 			// Arrange
 			var exerciseConfiguration = CreateTestExerciseConfiguration();
 			var stubTimerService = Substitute.For<ITimerService>();
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
 
 			// TODO: Replace string.Empty with saved state
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubTimerService);
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubTimerService, stubExerciseTrackerService);
 			var expectedExercise = new Exercise(exerciseConfiguration);
 			Exercise actualExercise = null;
 
@@ -131,7 +136,8 @@ namespace PL.CalfTrainer.Business.Tests
 			// Arrange
 			var exerciseConfiguration = CreateTestExerciseConfiguration();
 			var mockTimerService = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService, stubExerciseTrackerService);
 
 			// Act
 			unitUnderTest.Run();
@@ -146,7 +152,8 @@ namespace PL.CalfTrainer.Business.Tests
 			// Arrange
 			var exerciseConfiguration = CreateTestExerciseConfiguration();
 			var mockTimerService = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService, stubExerciseTrackerService);
 			unitUnderTest.Run();
 
 			// Act
@@ -162,7 +169,8 @@ namespace PL.CalfTrainer.Business.Tests
 			// Arrange
 			var exerciseConfiguration = CreateTestExerciseConfiguration();
 			var mockTimerService = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService, stubExerciseTrackerService);
 			unitUnderTest.Run();
 			unitUnderTest.Pause();
 
@@ -178,7 +186,8 @@ namespace PL.CalfTrainer.Business.Tests
 		{
 			// Arrange
 			var stubTimerService = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService, stubExerciseTrackerService);
 			var receivedChangedEvent = new AutoResetEvent(false);
 
 			unitUnderTest.ExerciseChanged += (sender, args) => receivedChangedEvent.Set();
@@ -205,7 +214,8 @@ namespace PL.CalfTrainer.Business.Tests
 		{
 			// Arrange
 			var stubTimerService = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService, stubExerciseTrackerService);
 			Exercise actualExercise = null;
 			bool handled = false;
 
@@ -241,7 +251,8 @@ namespace PL.CalfTrainer.Business.Tests
 			var actualOldSubExercise = SubExercise.Undefined;
 			var actualNewSubExercise = SubExercise.Undefined;
 			var stubTimerService = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService, stubExerciseTrackerService);
 
 			unitUnderTest.Run();
 
@@ -276,7 +287,8 @@ namespace PL.CalfTrainer.Business.Tests
 			var actualOldSubExercise = SubExercise.Undefined;
 			var actualNewSubExercise = SubExercise.Undefined;
 			var stubTimerService = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService, stubExerciseTrackerService);
 			bool handled = false;
 
 			unitUnderTest.Run();
@@ -310,7 +322,8 @@ namespace PL.CalfTrainer.Business.Tests
 			// Arrange
 			var exerciseConfiguration = CreateTestExerciseConfiguration();
 			var stubTimerService = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubTimerService);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubTimerService, stubExerciseTrackerService);
 			stubTimerService.IsRunning.Returns(true);
 
 			// Act and assert
@@ -323,7 +336,8 @@ namespace PL.CalfTrainer.Business.Tests
 			// Arrange
 			var exerciseConfiguration = CreateTestExerciseConfiguration();
 			var stubTimerService = Substitute.For<ITimerService>();
-			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubTimerService);
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, stubTimerService, stubExerciseTrackerService);
 			stubTimerService.IsRunning.Returns(false);
 
 			// Act and assert

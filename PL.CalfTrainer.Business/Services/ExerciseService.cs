@@ -13,20 +13,23 @@ namespace PL.CalfTrainer.Business.Services
 		private ITimerService mTimerService;
 		private const int TIMER_INTERVAL_MS = 1000;
 		private ExerciseServiceState mCurrentState = ExerciseServiceState.Stopped;
+		private IExerciseTrackerService mExerciseTrackerService;
 
-		protected ExerciseService(Exercise exercise, ExerciseConfiguration configuration, ITimerService timerService)
+		protected ExerciseService(Exercise exercise, ExerciseConfiguration configuration, ITimerService timerService, IExerciseTrackerService exerciseTrackerService)
 		{
 			mExercise = exercise;
 			mExerciseConfiguration = configuration;
 			mTimerService = timerService;
+			mExerciseTrackerService = exerciseTrackerService;
+
 			mTimerService.Elapsed += TimerServiceElapsed;
 		}
 
-		public static ExerciseService ExerciseServiceFromString(string stateAsString, ExerciseConfiguration configuration, ITimerService timerService)
+		public static ExerciseService ExerciseServiceFromString(string stateAsString, ExerciseConfiguration configuration, ITimerService timerService, IExerciseTrackerService exerciseTrackerService)
 		{
 			return string.IsNullOrEmpty(stateAsString)
-				? new ExerciseService(new Exercise(configuration), configuration, timerService)
-				: new ExerciseService(Exercise.ExerciseFromString(stateAsString, configuration), configuration, timerService);
+				? new ExerciseService(new Exercise(configuration), configuration, timerService, exerciseTrackerService)
+				: new ExerciseService(Exercise.ExerciseFromString(stateAsString, configuration), configuration, timerService, exerciseTrackerService);
 		}
 
 		public string StateToString()
@@ -62,6 +65,7 @@ namespace PL.CalfTrainer.Business.Services
 
 		public void Stop()
 		{
+			mExerciseTrackerService.ExerciseFinished(mExercise);
 			mTimerService.Stop();
 			SignalActiveSubExerciseChanged(mExercise.CurrentSubExercise, SubExercise.Undefined);
 			mExercise.Reset();
@@ -79,7 +83,6 @@ namespace PL.CalfTrainer.Business.Services
 		private void TimerServiceElapsed(object sender, EventArgs args)
 		{
 			// Handle next tick
-			//if (!mExercise.IsDone)
 			if(mCurrentState == ExerciseServiceState.Started)
 			{
 				if (mExercise.CurrentSubExercise == SubExercise.Undefined)
