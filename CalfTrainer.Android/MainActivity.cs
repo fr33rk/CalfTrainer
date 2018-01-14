@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -40,23 +39,43 @@ namespace CalfTrainer.Android
 
 			// Set our view from the "main" layout resource
 			SetContentView(Resource.Layout.Main);
-			CreateExerciseService(savedInstanceState);
-			CreateExerciseTrackerService();
 			AttachControlsToMemberVariables();
 			AttachControlEventHandler();
 
+			CreateExerciseTrackerService();
+			CreateExerciseService(savedInstanceState);
+
 			mExerciseService.SendExerciseState();
+			UpdateExerciseCounterOfTodayText();
+		}
+
+		private void UpdateExerciseCounterOfTodayText()
+		{
+			var executionTrackerOfToday =  mExerciseTrackerService.GetExecutionsOfDay(DateTime.Today);
+			UpdateExerciseCounterOfTodayText(executionTrackerOfToday?.ExersiseExecutions.Count ?? 0);
+		}
+
+		private void UpdateExerciseCounterOfTodayText(int count)
+		{
+			mExerciseCounterOfToday.Text =
+				$"{count} oefeningen vandaag";
 		}
 
 		private void CreateExerciseTrackerService()
 		{
-			mExerciseTrackerService = new ExerciseTrackerService(new SharedPreferencesExerciseTrackerDataService(GetPreferences(FileCreationMode.Private)), new TimeProvider());
+			// To get the shared preferences for the application use GetSharedPreferences("CalfTrainer.Android.CalfTrainer.Android.").
+			var preferencesForActivity = GetPreferences(FileCreationMode.Private);
+
+			mExerciseTrackerService = new ExerciseTrackerService(new SharedPreferencesExerciseTrackerDataService(preferencesForActivity), new TimeProvider());
 			mExerciseTrackerService.DailyExerciseTrackerChanged += ExerciseTrackerServiceOnDailyExerciseTrackerChanged;
 		}
 
 		private void ExerciseTrackerServiceOnDailyExerciseTrackerChanged(object sender, DailyExerciseTrackerChangedArgs dailyExerciseTrackerChangedArgs)
 		{
-			throw new NotImplementedException();
+			RunOnUiThread(() =>
+			{
+				UpdateExerciseCounterOfTodayText(dailyExerciseTrackerChangedArgs.DailyExerciseTracker.ExersiseExecutions.Count);
+			});
 		}
 
 		public override void OnSaveInstanceState(Bundle outState, PersistableBundle outPersistentState)
@@ -70,7 +89,7 @@ namespace CalfTrainer.Android
 			var exerciseState = savedInstance?.GetString(SavedExerciseStateKey, string.Empty);
 
 			// Create the exercise service
-			mExerciseService = ExerciseService.ExerciseServiceFromString(exerciseState, new ExerciseConfiguration(), new TimerService(), null);
+			mExerciseService = ExerciseService.ExerciseServiceFromString(exerciseState, new ExerciseConfiguration(), new TimerService(), mExerciseTrackerService);
 
 			mExerciseService.ExerciseChanged += ExerciseServiceOnExerciseChanged;
 			mExerciseService.ActiveSubExerciseChanged += ExerciseServiceOnActiveSubExerciseChanged;
@@ -94,7 +113,7 @@ namespace CalfTrainer.Android
 					case ExerciseServiceState.Stopped:
 						mStartPauseButton.Text = Resources.GetString(Resource.String.start);
 						break;
-				}	
+				}
 
 				mStopButton.Enabled = exerciseServiceStateChangedArgs.NewState != ExerciseServiceState.Stopped;
 			});
@@ -204,41 +223,6 @@ namespace CalfTrainer.Android
 					exercise.RemainingTotalTime.ToString(@"mm\:ss"));
 				mProgressBar.Progress = exercise.PercentageCompleted;
 			});
-		}
-	}
-
-	internal class SharedPreferencesExerciseTrackerDataService : IExerciseTrackerDataService
-	{
-		private ISharedPreferences mSharedPreferences;
-		private DailyExerciseTracker mDailyExerciseTracker;
-
-		public SharedPreferencesExerciseTrackerDataService(ISharedPreferences sharedPreferences)
-		{
-			mSharedPreferences = sharedPreferences;
-			LoadDailyExerciseTracker();
-		}
-
-		private void LoadDailyExerciseTracker()
-		{
-
-			if (mSharedPreferences.Contains("TrackedDate"))
-			{
-				mSharedPreferences.GetString("TrackedDate", string.Empty);
-
-			}
-
-		
-			mDailyExerciseTracker = new DailyExerciseTracker(DateTime.Today, new List<ExersiseExecution>());			
-		}
-
-		public void Add(ExersiseExecution exerciseExecution)
-		{
-			//mDailyExerciseTracker.
-		}
-
-		public IList<ExersiseExecution> GetByPeriod(DateTime periodStart, DateTime periodEnd)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

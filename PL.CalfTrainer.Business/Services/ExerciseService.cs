@@ -13,7 +13,7 @@ namespace PL.CalfTrainer.Business.Services
 		private ITimerService mTimerService;
 		private const int TIMER_INTERVAL_MS = 1000;
 		private ExerciseServiceState mCurrentState = ExerciseServiceState.Stopped;
-		private IExerciseTrackerService mExerciseTrackerService;
+		private readonly IExerciseTrackerService mExerciseTrackerService;
 
 		protected ExerciseService(Exercise exercise, ExerciseConfiguration configuration, ITimerService timerService, IExerciseTrackerService exerciseTrackerService)
 		{
