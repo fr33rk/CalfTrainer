@@ -57,8 +57,18 @@ namespace CalfTrainer.Android
 
 		private void UpdateExerciseCounterOfTodayText(int count)
 		{
-			mExerciseCounterOfToday.Text =
-				$"{count} oefeningen vandaag";
+			switch (count)
+			{
+				case 0:
+					mExerciseCounterOfToday.Text = "nog geen oefeningen vandaag";
+					break;
+				case 1:
+					mExerciseCounterOfToday.Text = $"{count} oefening vandaag";
+					break;
+				default:
+					mExerciseCounterOfToday.Text = $"{count} oefeningen vandaag";
+					break;
+			}
 		}
 
 		private void CreateExerciseTrackerService()

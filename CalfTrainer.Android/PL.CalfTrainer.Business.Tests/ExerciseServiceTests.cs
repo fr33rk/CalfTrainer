@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using NSubstitute;
 using NUnit.Framework;
 using PL.CalfTrainer.Business.Services;
@@ -221,7 +220,7 @@ namespace PL.CalfTrainer.Business.Tests
 
 			unitUnderTest.Run();
 
-			for (var i = 0; i < elapsedTicks -1; i++)
+			for (var i = 0; i < elapsedTicks - 1; i++)
 			{
 				stubTimerService.Elapsed += Raise.Event();
 			}
@@ -233,9 +232,7 @@ namespace PL.CalfTrainer.Business.Tests
 					actualExercise = args.Exercise;
 					handled = true;
 				}
-				
 			};
-			
 
 			// Act
 			stubTimerService.Elapsed += Raise.Event();
