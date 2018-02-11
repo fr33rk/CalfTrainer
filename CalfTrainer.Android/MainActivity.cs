@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Graphics;
+using Android.Media;
 using Android.OS;
 using Android.Widget;
 using PL.CalfTrainer.Business.Services;
@@ -29,9 +30,9 @@ namespace CalfTrainer.Android
 		private Button mStartPauseButton;
 		private Button mStopButton;
 		private ProgressBar mProgressBar;
+		private readonly ToneGenerator mToneGenerator = new ToneGenerator(Stream.Music, 100);
 
 		private const string SavedExerciseStateKey = "SavedExerciseStateKey";
-		private const string SavedExerciseConfigurationKey = "SavedExerciseConfigurationKey";
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -175,6 +176,8 @@ namespace CalfTrainer.Android
 
 				textViewOldSubExercise?.SetTextColor(Color.WhiteSmoke);
 				textViewNewSubExercise?.SetTextColor(Color.Green);
+
+				mToneGenerator.StartTone(Tone.CdmaPip, 150);
 			});
 		}
 

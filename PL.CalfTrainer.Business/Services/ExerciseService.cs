@@ -9,9 +9,9 @@ namespace PL.CalfTrainer.Business.Services
 	public class ExerciseService : IExerciseService
 	{
 		private Exercise mExercise;
-		private ExerciseConfiguration mExerciseConfiguration;
-		private ITimerService mTimerService;
-		private const int TIMER_INTERVAL_MS = 1000;
+		private readonly ExerciseConfiguration mExerciseConfiguration;
+		private readonly ITimerService mTimerService;
+		private const int TimerIntervalMs = 1000;
 		private ExerciseServiceState mCurrentState = ExerciseServiceState.Stopped;
 		private readonly IExerciseTrackerService mExerciseTrackerService;
 
@@ -47,7 +47,7 @@ namespace PL.CalfTrainer.Business.Services
 		{
 			if (mCurrentState == ExerciseServiceState.Stopped)
 			{
-				mTimerService.Start(TIMER_INTERVAL_MS);
+				mTimerService.Start(TimerIntervalMs);
 			}
 			else if (mCurrentState == ExerciseServiceState.Paused)
 			{

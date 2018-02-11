@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using PL.CalfTrainer.Infrastructure.EventArgs;
 
 namespace PL.CalfTrainer.Infrastructure.Services

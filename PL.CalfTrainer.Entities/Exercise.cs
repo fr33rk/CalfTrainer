@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace PL.CalfTrainer.Entities
 {
@@ -10,8 +8,8 @@ namespace PL.CalfTrainer.Entities
 		#region Definitions
 
 		private readonly ExerciseConfiguration mConfiguration;
-		private const char KEY_VALUE_SEPARATOR = '=';
-		private const string KEY_VALUE_PAIR_SEPARATOR = ";";
+		private const char KeyValueSeparator = '=';
+		private const string KeyValuePairSeparator = ";";
 		private TimeSpan mTotalTime;
 
 		#endregion Definitions
@@ -92,7 +90,7 @@ namespace PL.CalfTrainer.Entities
 
 		public TimeSpan RemainingTotalTime => TimeSpan.FromSeconds(
 			(mConfiguration.DurationPerStance + mConfiguration.PreparationDuration + 1) // + 1 for switching
-			* Math.Max(0, (LongLeftCount + LongRightCount + ShortLeftCount + ShortRightCount -1)) // -1 because the time of the last one depends on the remaining time.
+			* Math.Max(0, (LongLeftCount + LongRightCount + ShortLeftCount + ShortRightCount - 1)) // -1 because the time of the last one depends on the remaining time.
 			+ RemainingPreparationTime + RemainingSubExerciseTime
 			+ 1); // First tick is used to start.
 
@@ -113,12 +111,12 @@ namespace PL.CalfTrainer.Entities
 				CreateKeyValuePairString(nameof(CurrentSubExercise), (int)CurrentSubExercise)
 			};
 
-			return string.Join(KEY_VALUE_PAIR_SEPARATOR, keyValuePairStrings);
+			return string.Join(KeyValuePairSeparator, keyValuePairStrings);
 		}
 
 		private static string CreateKeyValuePairString(string key, int value)
 		{
-			return $"{key}{KEY_VALUE_SEPARATOR}{value}";
+			return $"{key}{KeyValueSeparator}{value}";
 		}
 
 		private static Dictionary<string, int> GetNameValuePairsFromString(string exerciseAsString)
@@ -135,13 +133,13 @@ namespace PL.CalfTrainer.Entities
 
 		private static void AddNameValueToDictionary(IDictionary<string, int> dictionary, string keyValuePairString)
 		{
-			var keyValuePair = keyValuePairString.Split(KEY_VALUE_SEPARATOR);
+			var keyValuePair = keyValuePairString.Split(KeyValueSeparator);
 			dictionary[keyValuePair[0]] = Convert.ToInt32(keyValuePair[1]);
 		}
 
 		#endregion To and from String
 
-		public virtual int PercentageCompleted => 100 - Convert.ToInt32((double) RemainingTotalTime.TotalSeconds / mTotalTime.TotalSeconds * 100);
+		public virtual int PercentageCompleted => 100 - Convert.ToInt32(RemainingTotalTime.TotalSeconds / mTotalTime.TotalSeconds * 100);
 
 		public bool IsDone => PercentageCompleted == 100;
 	}
