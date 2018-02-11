@@ -180,5 +180,70 @@ namespace PL.CalfTrainer.Business.Tests
 			// Assert
 			Assert.AreEqual(expectedPercentage, unitUnderTest.PercentageCompleted);
 		}
+
+		[Test]
+		public void Exercise_Started_IsNotDone()
+		{
+			// Arrange
+			var stubConfiguration = new ExerciseConfiguration()
+			{
+				NoOfRepetitions = 8,
+				DurationPerStance = 8,
+				PreparationDuration = 3
+			};
+			
+
+			var unitUnderTest = new Exercise(stubConfiguration);
+
+			// Assert
+			Assert.IsFalse(unitUnderTest.IsDone);
+		}
+
+		[Test]
+		public void Exercise_Halfway_IsNotDone()
+		{
+			// Arrange
+			var stubConfiguration = new ExerciseConfiguration()
+			{
+				NoOfRepetitions = 8,
+				DurationPerStance = 8,
+				PreparationDuration = 3
+			};
+			var expectedPercentage = 50;
+
+			var unitUnderTest = new Exercise(stubConfiguration)
+			{
+				LongLeftCount = 0,
+				LongRightCount = 0
+			};
+
+			// Assert
+			Assert.IsFalse(unitUnderTest.IsDone);
+		}
+
+		[Test]
+		public void Exercise_Done_IsDone()
+		{
+			// Arrange
+			var stubConfiguration = new ExerciseConfiguration()
+			{
+				NoOfRepetitions = 8,
+				DurationPerStance = 8,
+				PreparationDuration = 3
+			};
+
+			var unitUnderTest = new Exercise(stubConfiguration)
+			{
+				LongLeftCount = 0,
+				LongRightCount = 0,
+				ShortLeftCount = 0,
+				ShortRightCount = 0,
+				RemainingPreparationTime = 0,
+				RemainingSubExerciseTime = 0
+			};
+
+			// Assert
+			Assert.IsTrue(unitUnderTest.IsDone);
+		}
 	}
 }

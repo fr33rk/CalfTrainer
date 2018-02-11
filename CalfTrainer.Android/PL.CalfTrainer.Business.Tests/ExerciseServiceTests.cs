@@ -1,8 +1,10 @@
 ﻿using System.Threading;
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using PL.CalfTrainer.Business.Services;
 using PL.CalfTrainer.Entities;
+using PL.CalfTrainer.Infrastructure.Enums;
 using PL.CalfTrainer.Infrastructure.Services;
 
 namespace PL.CalfTrainer.Business.Tests
@@ -146,6 +148,30 @@ namespace PL.CalfTrainer.Business.Tests
 		}
 
 		[Test]
+		public void ExerciseService_Start_TriggersStateChangeEvent()
+		{
+			// Arrange
+			var correctEventRaised = new AutoResetEvent(false);
+			var exerciseConfiguration = CreateTestExerciseConfiguration();
+			var mockTimerService = Substitute.For<ITimerService>();
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService, stubExerciseTrackerService);
+			unitUnderTest.StateChanged += (sender, args) =>
+			{
+				if (args.NewState == ExerciseServiceState.Started)
+				{
+					correctEventRaised.Set();
+				}
+			};
+
+			// Act
+			unitUnderTest.Run();
+
+			// Assert
+			Assert.IsTrue(correctEventRaised.WaitOne(5000), "Expected StateChanged event to be raised.");
+		}
+
+		[Test]
 		public void ExerciseService_Pause_PausesTimer()
 		{
 			// Arrange
@@ -160,6 +186,32 @@ namespace PL.CalfTrainer.Business.Tests
 
 			// Assert
 			mockTimerService.Received(1).Pause();
+		}
+
+		[Test]
+		public void ExerciseService_Paused_TriggersStateChangeEvent()
+		{
+			// Arrange
+			var correctEventRaised = new AutoResetEvent(false);
+			var exerciseConfiguration = CreateTestExerciseConfiguration();
+			var mockTimerService = Substitute.For<ITimerService>();
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, exerciseConfiguration, mockTimerService, stubExerciseTrackerService);
+			unitUnderTest.StateChanged += (sender, args) =>
+			{
+				if (args.NewState == ExerciseServiceState.Paused)
+				{
+					correctEventRaised.Set();
+				}
+			};
+
+			unitUnderTest.Run();
+
+			// Act
+			unitUnderTest.Pause();
+
+			// Assert
+			Assert.IsTrue(correctEventRaised.WaitOne(5000), "Expected StateChanged event to be raised.");
 		}
 
 		[Test]
@@ -208,7 +260,7 @@ namespace PL.CalfTrainer.Business.Tests
 		[TestCase(193, "1st short sub exercise", "LongLeftCount=0;LongRightCount=0;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=2")]
 		[TestCase(205, "2st short sub exercise", "LongLeftCount=0;LongRightCount=0;ShortLeftCount=7;ShortRightCount=8;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=4")]
 		[TestCase(217, "2nd time 1st short sub exercise", "LongLeftCount=0;LongRightCount=0;ShortLeftCount=7;ShortRightCount=7;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=2")]
-		[TestCase(385, "Done", "LongLeftCount=0;LongRightCount=0;ShortLeftCount=0;ShortRightCount=0;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=0")]
+		[TestCase(385, "Done", "LongLeftCount=8;LongRightCount=8;ShortLeftCount=8;ShortRightCount=8;RemainingPreparationTime=3;RemainingSubExerciseTime=8;CurrentSubExercise=0")]
 		public void ExerciseService_TimerTick_ExerciseChangedCorrect(int elapsedTicks, string testCaseDescription, string expectedExerciseState)
 		{
 			// Arrange
@@ -270,6 +322,32 @@ namespace PL.CalfTrainer.Business.Tests
 			// Assert
 			Assert.AreEqual(SubExercise.ShortLeft, actualOldSubExercise);
 			Assert.AreEqual(SubExercise.Undefined, actualNewSubExercise);
+		}
+
+		[Test]
+		public void ExerciseService_Stop_TriggersStateChangeEvent()
+		{
+			// Arrange
+			var correctEventRaised = new AutoResetEvent(false);
+			var stubTimerService = Substitute.For<ITimerService>();
+			var stubExerciseTrackerService = Substitute.For<IExerciseTrackerService>();
+			var unitUnderTest = ExerciseService.ExerciseServiceFromString(string.Empty, CreateTestExerciseConfiguration(), stubTimerService, stubExerciseTrackerService);
+			unitUnderTest.StateChanged += (sender, args) =>
+			{
+				if (args.NewState == ExerciseServiceState.Stopped)
+				{
+					correctEventRaised.Set();
+				}
+			};
+
+			unitUnderTest.Run();
+
+
+			// Act
+			unitUnderTest.Stop();
+
+			// Assert
+			Assert.IsTrue(correctEventRaised.WaitOne(5000), "Expected StateChanged event to be raised.");
 		}
 
 		[Test]
